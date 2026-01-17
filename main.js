@@ -2430,9 +2430,9 @@ async function loadAudio() {
             await audioContext.resume();
         }
         
-        const response = await fetch('./public/audio/Tequila demo v2.wav');
+        const response = await fetch('./public/audio/Tequila demo v2.mp3');
         if (!response.ok) {
-            console.log('Lydfilinnlasting feilet - sjekk at public/audio/Tequila demo v2.wav eksisterer');
+            console.log('Lydfilinnlasting feilet - sjekk at public/audio/Tequila demo v2.mp3 eksisterer');
             return;
         }
         const arrayBuffer = await response.arrayBuffer();
@@ -2454,7 +2454,7 @@ async function initAudio() {
         }
         // Pre-last lyden
         if (!audioBuffer) {
-            const response = await fetch('./public/audio/Tequila demo v2.wav');
+            const response = await fetch('./public/audio/Tequila demo v2.mp3');
             if (response.ok) {
                 const arrayBuffer = await response.arrayBuffer();
                 audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
@@ -2488,7 +2488,7 @@ async function toggleMusic() {
     if (!audioBuffer) {
         musicText.textContent = 'Laster lyd...';
         try {
-            const response = await fetch('./public/audio/Tequila demo v2.wav');
+            const response = await fetch('./public/audio/Tequila demo v2.mp3');
             if (!response.ok) {
                 musicText.textContent = 'Lydfil ikke funnet';
                 return;
