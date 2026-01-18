@@ -3057,25 +3057,26 @@ function animate() {
         dancePhase += 0.15;
         
         // Hopp opp og ned til beaten
-        avatar.position.y = GROUND_LEVEL + Math.abs(Math.sin(dancePhase * 2)) * 0.15;
+        avatar.position.y = GROUND_LEVEL + Math.abs(Math.sin(dancePhase * 2)) * 0.12;
         
-        // Kroppen svinger side til side
-        avatar.rotation.z = Math.sin(dancePhase) * 0.1;
+        // Kroppen svinger litt side til side
+        avatar.rotation.z = Math.sin(dancePhase) * 0.05;
         
-        // Armene går opp og ned
-        leftArm2.rotation.x = Math.sin(dancePhase * 2) * 0.6 - 0.3;
-        rightArm2.rotation.x = -Math.sin(dancePhase * 2) * 0.6 - 0.3;
-        leftArm2.rotation.z = Math.sin(dancePhase) * 0.3 + 0.5;
-        rightArm2.rotation.z = -Math.sin(dancePhase) * 0.3 - 0.5;
+        // Armene pumper opp og ned (som på en fest!)
+        const armPump = Math.sin(dancePhase * 2);
+        leftArm2.rotation.x = armPump * 0.5;  // Frem/tilbake
+        rightArm2.rotation.x = -armPump * 0.5;
+        leftArm2.rotation.z = 0;  // Ikke ut til siden
+        rightArm2.rotation.z = 0;
         
-        // Bena beveger seg
-        leftLeg2.rotation.x = Math.sin(dancePhase * 2) * 0.3;
-        rightLeg2.rotation.x = -Math.sin(dancePhase * 2) * 0.3;
-        leftLeg2.rotation.z = Math.sin(dancePhase) * 0.15;
-        rightLeg2.rotation.z = -Math.sin(dancePhase) * 0.15;
+        // Bena stepper side til side
+        leftLeg2.rotation.x = Math.sin(dancePhase * 2) * 0.25;
+        rightLeg2.rotation.x = -Math.sin(dancePhase * 2) * 0.25;
+        leftLeg2.rotation.z = 0;
+        rightLeg2.rotation.z = 0;
         
         // Roter litt frem og tilbake
-        avatar.rotation.y = playerRotation + Math.sin(dancePhase * 0.5) * 0.3;
+        avatar.rotation.y = playerRotation + Math.sin(dancePhase * 0.5) * 0.2;
     } else {
         // Standing still
         avatar.position.y = GROUND_LEVEL;
