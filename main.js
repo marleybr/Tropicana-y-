@@ -1712,91 +1712,51 @@ boyHairGroup.add(rightSideHair);
 avatar.add(boyHairGroup);
 
 // ============================================
-// JENTE-HÅR - Pent langt hår med hestehale
+// JENTE-HÅR - Enkelt langt hår (Roblox-stil)
 // ============================================
 girlHairGroup = new THREE.Group();
 girlHairGroup.visible = false; // Skjult som standard
 
-// Hovedhår på toppen (rund form)
-const girlTopHairGeometry = new THREE.BoxGeometry(0.6, 0.18, 0.6);
-const girlTopHair = new THREE.Mesh(girlTopHairGeometry, hairMaterial2);
+// Topp av håret - dekker hodet
+const girlTopGeometry = new THREE.BoxGeometry(0.58, 0.15, 0.58);
+const girlTopHair = new THREE.Mesh(girlTopGeometry, hairMaterial2);
 girlTopHair.position.y = 1.9;
 girlHairGroup.add(girlTopHair);
 
-// Ekstra volum på toppen
-const girlVolumeGeometry = new THREE.BoxGeometry(0.55, 0.1, 0.55);
-const girlVolume = new THREE.Mesh(girlVolumeGeometry, hairMaterial2);
-girlVolume.position.y = 1.96;
-girlHairGroup.add(girlVolume);
+// Pannelugg - rett over pannen
+const bangGeometry = new THREE.BoxGeometry(0.5, 0.12, 0.1);
+const bangs = new THREE.Mesh(bangGeometry, hairMaterial2);
+bangs.position.set(0, 1.75, 0.28);
+girlHairGroup.add(bangs);
 
-// Pen pannelugg (sidesveipet)
-const bangLeftGeometry = new THREE.BoxGeometry(0.25, 0.18, 0.1);
-const bangLeft = new THREE.Mesh(bangLeftGeometry, hairMaterial2);
-bangLeft.position.set(-0.1, 1.78, 0.3);
-bangLeft.rotation.z = 0.1;
-girlHairGroup.add(bangLeft);
+// Venstre side - langt hår ned til skulder
+const leftHairGeometry = new THREE.BoxGeometry(0.12, 0.65, 0.5);
+const leftHair = new THREE.Mesh(leftHairGeometry, hairMaterial2);
+leftHair.position.set(-0.32, 1.5, 0);
+girlHairGroup.add(leftHair);
 
-const bangRightGeometry = new THREE.BoxGeometry(0.18, 0.15, 0.1);
-const bangRight = new THREE.Mesh(bangRightGeometry, hairMaterial2);
-bangRight.position.set(0.18, 1.76, 0.3);
-bangRight.rotation.z = -0.15;
-girlHairGroup.add(bangRight);
+// Høyre side - langt hår ned til skulder
+const rightHair = leftHair.clone();
+rightHair.position.x = 0.32;
+girlHairGroup.add(rightHair);
 
-// Sider av håret - flyter ned langs ansiktet
-const girlSideLeftGeometry = new THREE.BoxGeometry(0.1, 0.5, 0.35);
-const girlSideLeft = new THREE.Mesh(girlSideLeftGeometry, hairMaterial2);
-girlSideLeft.position.set(-0.32, 1.55, 0.05);
-girlHairGroup.add(girlSideLeft);
+// Bakside av håret - dekker nakken
+const backTopGeometry = new THREE.BoxGeometry(0.55, 0.45, 0.15);
+const backTop = new THREE.Mesh(backTopGeometry, hairMaterial2);
+backTop.position.set(0, 1.6, -0.28);
+girlHairGroup.add(backTop);
 
-const girlSideRightGeometry = new THREE.BoxGeometry(0.1, 0.5, 0.35);
-const girlSideRight = new THREE.Mesh(girlSideRightGeometry, hairMaterial2);
-girlSideRight.position.set(0.32, 1.55, 0.05);
-girlHairGroup.add(girlSideRight);
+// Langt hår bak - går ned ryggen
+const backLongGeometry = new THREE.BoxGeometry(0.45, 0.7, 0.12);
+const backLong = new THREE.Mesh(backLongGeometry, hairMaterial2);
+backLong.position.set(0, 1.0, -0.3);
+girlHairGroup.add(backLong);
 
-// Hår som går ned foran skuldrene
-const frontHairLeftGeometry = new THREE.BoxGeometry(0.08, 0.4, 0.15);
-const frontHairLeft = new THREE.Mesh(frontHairLeftGeometry, hairMaterial2);
-frontHairLeft.position.set(-0.28, 1.15, 0.15);
-girlHairGroup.add(frontHairLeft);
-
-const frontHairRight = frontHairLeft.clone();
-frontHairRight.position.x = 0.28;
-girlHairGroup.add(frontHairRight);
-
-// Bakre hår (tykkere, går ned ryggen)
-const backHairMainGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.18);
-const backHairMain = new THREE.Mesh(backHairMainGeometry, hairMaterial2);
-backHairMain.position.set(0, 1.55, -0.25);
-girlHairGroup.add(backHairMain);
-
-// Hestehale - strikk/bånd
-const hairTieMaterial = new THREE.MeshLambertMaterial({ color: 0xe74c3c }); // Rødt hårbånd
-const hairTieGeometry = new THREE.BoxGeometry(0.15, 0.08, 0.15);
-const hairTie = new THREE.Mesh(hairTieGeometry, hairTieMaterial);
-hairTie.position.set(0, 1.25, -0.3);
-girlHairGroup.add(hairTie);
-
-// Hestehale - selve halen
-const ponytailTopGeometry = new THREE.BoxGeometry(0.2, 0.3, 0.15);
-const ponytailTop = new THREE.Mesh(ponytailTopGeometry, hairMaterial2);
-ponytailTop.position.set(0, 1.05, -0.32);
-girlHairGroup.add(ponytailTop);
-
-const ponytailMidGeometry = new THREE.BoxGeometry(0.18, 0.25, 0.12);
-const ponytailMid = new THREE.Mesh(ponytailMidGeometry, hairMaterial2);
-ponytailMid.position.set(0, 0.82, -0.34);
-girlHairGroup.add(ponytailMid);
-
-const ponytailEndGeometry = new THREE.BoxGeometry(0.15, 0.2, 0.1);
-const ponytailEnd = new THREE.Mesh(ponytailEndGeometry, hairMaterial2);
-ponytailEnd.position.set(0, 0.62, -0.35);
-girlHairGroup.add(ponytailEnd);
-
-// Hårtupper (spissere ende)
-const ponytailTipGeometry = new THREE.BoxGeometry(0.1, 0.12, 0.08);
-const ponytailTip = new THREE.Mesh(ponytailTipGeometry, hairMaterial2);
-ponytailTip.position.set(0, 0.48, -0.35);
-girlHairGroup.add(ponytailTip);
+// Hårtupp bak
+const backTipGeometry = new THREE.BoxGeometry(0.35, 0.2, 0.1);
+const backTip = new THREE.Mesh(backTipGeometry, hairMaterial2);
+backTip.position.set(0, 0.55, -0.3);
+girlHairGroup.add(backTip);
 
 avatar.add(girlHairGroup);
 
