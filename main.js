@@ -1669,13 +1669,12 @@ const hairMaterial2 = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Sva
 const jerseyMaterial2 = new THREE.MeshLambertMaterial({ color: 0xf4d03f }); // Brasil gul
 const pantsMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Svart
 const shoeMaterial2 = new THREE.MeshLambertMaterial({ color: 0x2a2a2a }); // Mørke sko
-const lipstickMaterial = new THREE.MeshLambertMaterial({ color: 0xe74c3c }); // Rød leppestift
 
 // Referanser for animasjon (defineres senere)
 let leftArm2, rightArm2, leftLeg2, rightLeg2, leftHand2, rightHand2;
 
 // Hår-grupper for bytte
-let boyHairGroup, girlHairGroup, lipstick;
+let boyHairGroup, girlHairGroup;
 
 // ============================================
 // HODE - Blocky Roblox-style
@@ -1713,46 +1712,125 @@ boyHairGroup.add(rightSideHair);
 avatar.add(boyHairGroup);
 
 // ============================================
-// JENTE-HÅR - Langt hår
+// JENTE-HÅR - Pent langt hår med hestehale
 // ============================================
 girlHairGroup = new THREE.Group();
 girlHairGroup.visible = false; // Skjult som standard
 
-// Topp av håret
-const girlTopHairGeometry = new THREE.BoxGeometry(0.6, 0.12, 0.6);
+// Hovedhår på toppen (rund form)
+const girlTopHairGeometry = new THREE.BoxGeometry(0.6, 0.18, 0.6);
 const girlTopHair = new THREE.Mesh(girlTopHairGeometry, hairMaterial2);
-girlTopHair.position.y = 1.88;
+girlTopHair.position.y = 1.9;
 girlHairGroup.add(girlTopHair);
 
-// Pannelugg
-const bangsGeometry = new THREE.BoxGeometry(0.52, 0.15, 0.12);
-const bangs = new THREE.Mesh(bangsGeometry, hairMaterial2);
-bangs.position.set(0, 1.78, 0.28);
-girlHairGroup.add(bangs);
+// Ekstra volum på toppen
+const girlVolumeGeometry = new THREE.BoxGeometry(0.55, 0.1, 0.55);
+const girlVolume = new THREE.Mesh(girlVolumeGeometry, hairMaterial2);
+girlVolume.position.y = 1.96;
+girlHairGroup.add(girlVolume);
 
-// Sider av håret (lenger ned)
-const girlSideHairGeometry = new THREE.BoxGeometry(0.12, 0.7, 0.4);
-const girlLeftSideHair = new THREE.Mesh(girlSideHairGeometry, hairMaterial2);
-girlLeftSideHair.position.set(-0.32, 1.45, 0);
-girlHairGroup.add(girlLeftSideHair);
+// Pen pannelugg (sidesveipet)
+const bangLeftGeometry = new THREE.BoxGeometry(0.25, 0.18, 0.1);
+const bangLeft = new THREE.Mesh(bangLeftGeometry, hairMaterial2);
+bangLeft.position.set(-0.1, 1.78, 0.3);
+bangLeft.rotation.z = 0.1;
+girlHairGroup.add(bangLeft);
 
-const girlRightSideHair = girlLeftSideHair.clone();
-girlRightSideHair.position.x = 0.32;
-girlHairGroup.add(girlRightSideHair);
+const bangRightGeometry = new THREE.BoxGeometry(0.18, 0.15, 0.1);
+const bangRight = new THREE.Mesh(bangRightGeometry, hairMaterial2);
+bangRight.position.set(0.18, 1.76, 0.3);
+bangRight.rotation.z = -0.15;
+girlHairGroup.add(bangRight);
 
-// Langt hår bak
-const backHairGeometry = new THREE.BoxGeometry(0.55, 0.9, 0.15);
-const backHair = new THREE.Mesh(backHairGeometry, hairMaterial2);
-backHair.position.set(0, 1.35, -0.22);
-girlHairGroup.add(backHair);
+// Sider av håret - flyter ned langs ansiktet
+const girlSideLeftGeometry = new THREE.BoxGeometry(0.1, 0.5, 0.35);
+const girlSideLeft = new THREE.Mesh(girlSideLeftGeometry, hairMaterial2);
+girlSideLeft.position.set(-0.32, 1.55, 0.05);
+girlHairGroup.add(girlSideLeft);
 
-// Hårtupper (ender av langt hår)
-const hairTipsGeometry = new THREE.BoxGeometry(0.5, 0.15, 0.12);
-const hairTips = new THREE.Mesh(hairTipsGeometry, hairMaterial2);
-hairTips.position.set(0, 0.85, -0.22);
-girlHairGroup.add(hairTips);
+const girlSideRightGeometry = new THREE.BoxGeometry(0.1, 0.5, 0.35);
+const girlSideRight = new THREE.Mesh(girlSideRightGeometry, hairMaterial2);
+girlSideRight.position.set(0.32, 1.55, 0.05);
+girlHairGroup.add(girlSideRight);
+
+// Hår som går ned foran skuldrene
+const frontHairLeftGeometry = new THREE.BoxGeometry(0.08, 0.4, 0.15);
+const frontHairLeft = new THREE.Mesh(frontHairLeftGeometry, hairMaterial2);
+frontHairLeft.position.set(-0.28, 1.15, 0.15);
+girlHairGroup.add(frontHairLeft);
+
+const frontHairRight = frontHairLeft.clone();
+frontHairRight.position.x = 0.28;
+girlHairGroup.add(frontHairRight);
+
+// Bakre hår (tykkere, går ned ryggen)
+const backHairMainGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.18);
+const backHairMain = new THREE.Mesh(backHairMainGeometry, hairMaterial2);
+backHairMain.position.set(0, 1.55, -0.25);
+girlHairGroup.add(backHairMain);
+
+// Hestehale - strikk/bånd
+const hairTieMaterial = new THREE.MeshLambertMaterial({ color: 0xe74c3c }); // Rødt hårbånd
+const hairTieGeometry = new THREE.BoxGeometry(0.15, 0.08, 0.15);
+const hairTie = new THREE.Mesh(hairTieGeometry, hairTieMaterial);
+hairTie.position.set(0, 1.25, -0.3);
+girlHairGroup.add(hairTie);
+
+// Hestehale - selve halen
+const ponytailTopGeometry = new THREE.BoxGeometry(0.2, 0.3, 0.15);
+const ponytailTop = new THREE.Mesh(ponytailTopGeometry, hairMaterial2);
+ponytailTop.position.set(0, 1.05, -0.32);
+girlHairGroup.add(ponytailTop);
+
+const ponytailMidGeometry = new THREE.BoxGeometry(0.18, 0.25, 0.12);
+const ponytailMid = new THREE.Mesh(ponytailMidGeometry, hairMaterial2);
+ponytailMid.position.set(0, 0.82, -0.34);
+girlHairGroup.add(ponytailMid);
+
+const ponytailEndGeometry = new THREE.BoxGeometry(0.15, 0.2, 0.1);
+const ponytailEnd = new THREE.Mesh(ponytailEndGeometry, hairMaterial2);
+ponytailEnd.position.set(0, 0.62, -0.35);
+girlHairGroup.add(ponytailEnd);
+
+// Hårtupper (spissere ende)
+const ponytailTipGeometry = new THREE.BoxGeometry(0.1, 0.12, 0.08);
+const ponytailTip = new THREE.Mesh(ponytailTipGeometry, hairMaterial2);
+ponytailTip.position.set(0, 0.48, -0.35);
+girlHairGroup.add(ponytailTip);
 
 avatar.add(girlHairGroup);
+
+// ============================================
+// JENTE-DETALJER - Øyevipper
+// ============================================
+const eyelashMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+
+// Venstre øyevipper
+const leftLashGroup = new THREE.Group();
+for (let i = 0; i < 3; i++) {
+    const lashGeometry = new THREE.BoxGeometry(0.02, 0.04, 0.01);
+    const lash = new THREE.Mesh(lashGeometry, eyelashMaterial);
+    lash.position.set(-0.15 + i * 0.03, 1.64, 0.29);
+    lash.rotation.z = -0.3 + i * 0.15;
+    leftLashGroup.add(lash);
+}
+leftLashGroup.visible = false;
+avatar.add(leftLashGroup);
+
+// Høyre øyevipper
+const rightLashGroup = new THREE.Group();
+for (let i = 0; i < 3; i++) {
+    const lashGeometry = new THREE.BoxGeometry(0.02, 0.04, 0.01);
+    const lash = new THREE.Mesh(lashGeometry, eyelashMaterial);
+    lash.position.set(0.09 + i * 0.03, 1.64, 0.29);
+    lash.rotation.z = 0.3 - i * 0.15;
+    rightLashGroup.add(lash);
+}
+rightLashGroup.visible = false;
+avatar.add(rightLashGroup);
+
+// Lagre referanser for å vise/skjule
+const girlEyelashes = { left: leftLashGroup, right: rightLashGroup };
 
 // ============================================
 // ANSIKT - Enkelt Roblox-style
@@ -1799,14 +1877,6 @@ const rightCorner = leftCorner.clone();
 rightCorner.position.x = 0.12;
 avatar.add(rightCorner);
 
-// Leppestift (kun synlig for jente)
-lipstick = new THREE.Mesh(
-    new THREE.BoxGeometry(0.2, 0.05, 0.02),
-    lipstickMaterial
-);
-lipstick.position.set(0, 1.42, 0.29);
-lipstick.visible = false;
-avatar.add(lipstick);
 
 // ============================================
 // OVERKROPP - Blocky Roblox torso
@@ -1926,11 +1996,13 @@ function setCharacterGender(gender) {
     if (gender === 'girl') {
         boyHairGroup.visible = false;
         girlHairGroup.visible = true;
-        lipstick.visible = true;
+        girlEyelashes.left.visible = true;
+        girlEyelashes.right.visible = true;
     } else {
         boyHairGroup.visible = true;
         girlHairGroup.visible = false;
-        lipstick.visible = false;
+        girlEyelashes.left.visible = false;
+        girlEyelashes.right.visible = false;
     }
 }
 

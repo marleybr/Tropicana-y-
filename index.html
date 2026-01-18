@@ -386,23 +386,47 @@
         .preview-hair-girl::after {
             content: '';
             position: absolute;
-            width: 20px;
-            height: 50px;
+            width: 15px;
+            height: 35px;
             background: #1a1a1a;
-            border-radius: 0 0 10px 10px;
+            border-radius: 0 0 8px 8px;
             top: 35px;
-            left: -5px;
+            left: 0px;
         }
 
         .preview-hair-girl::before {
             content: '';
             position: absolute;
-            width: 20px;
-            height: 50px;
+            width: 15px;
+            height: 35px;
             background: #1a1a1a;
-            border-radius: 0 0 10px 10px;
+            border-radius: 0 0 8px 8px;
             top: 35px;
-            right: -5px;
+            right: 0px;
+        }
+
+        .preview-ponytail {
+            width: 12px;
+            height: 45px;
+            background: #1a1a1a;
+            border-radius: 6px;
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%) translateX(0px);
+            z-index: -1;
+        }
+
+        .preview-ponytail::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 2px;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .preview-body {
@@ -416,17 +440,6 @@
             transform: translateX(-50%);
             border: 3px solid #009c3b;
             border-top: none;
-        }
-
-        .preview-lips {
-            width: 15px;
-            height: 5px;
-            background: #e74c3c;
-            border-radius: 3px;
-            position: absolute;
-            top: 32px;
-            left: 50%;
-            transform: translateX(-50%);
         }
 
         .character-name {
@@ -619,8 +632,8 @@
                 <div class="character-preview girl-preview">
                     <div class="preview-head"></div>
                     <div class="preview-hair-girl"></div>
+                    <div class="preview-ponytail"></div>
                     <div class="preview-body"></div>
-                    <div class="preview-lips"></div>
                 </div>
                 <span class="character-name">Jente 👧</span>
             </div>
