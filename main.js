@@ -2164,6 +2164,8 @@ for (let i = 0; i < 8; i++) {
 const keys = { w: false, a: false, s: false, d: false, e: false };
 const moveSpeed = 0.12;
 let playerRotation = 0;
+let targetRotation = 0;
+const rotationSpeed = 0.15; // Hvor raskt avataren snur seg (0.1 = sakte, 0.3 = raskt)
 
 // Keyboard kontroller
 document.addEventListener('keydown', (e) => {
@@ -2891,22 +2893,37 @@ function animate() {
         avatar.position.x += moveX;
         avatar.position.z += moveZ;
         
-        playerRotation = Math.atan2(moveX, moveZ);
+        // Beregn mål-rotasjon basert på bevegelsesretning
+        targetRotation = Math.atan2(moveX, moveZ);
+        
+        // Smooth rotasjon - håndter wrap-around ved +/- PI
+        let rotationDiff = targetRotation - playerRotation;
+        
+        // Normaliser rotasjonsforskjellen til -PI til PI
+        while (rotationDiff > Math.PI) rotationDiff -= Math.PI * 2;
+        while (rotationDiff < -Math.PI) rotationDiff += Math.PI * 2;
+        
+        // Smooth interpolering mot mål-rotasjon
+        playerRotation += rotationDiff * rotationSpeed;
         avatar.rotation.y = playerRotation;
         
         // Gåanimasjon
         walkCycle += 0.3;
         avatar.position.y = GROUND_LEVEL + Math.abs(Math.sin(walkCycle)) * 0.08;
         
-        // Arm-sving
-        leftArm2.rotation.x = Math.sin(walkCycle) * 0.3;
-        rightArm2.rotation.x = -Math.sin(walkCycle) * 0.3;
-        leftHand2.position.y = 0.55 + Math.sin(walkCycle) * 0.05;
-        rightHand2.position.y = 0.55 - Math.sin(walkCycle) * 0.05;
+        // Arm-sving (blocky Roblox-stil - hele armen svinger)
+        leftArm2.rotation.x = Math.sin(walkCycle) * 0.4;
+        rightArm2.rotation.x = -Math.sin(walkCycle) * 0.4;
+        
+        // Ben-sving for Roblox-stil gange
+        leftLeg2.rotation.x = -Math.sin(walkCycle) * 0.4;
+        rightLeg2.rotation.x = Math.sin(walkCycle) * 0.4;
     } else {
         avatar.position.y = GROUND_LEVEL;
         leftArm2.rotation.x = 0;
         rightArm2.rotation.x = 0;
+        leftLeg2.rotation.x = 0;
+        rightLeg2.rotation.x = 0;
     }
     
     // Grense
