@@ -1661,6 +1661,7 @@ const musicNotes = [];
 // AVATAR - Roblox/Lego Style med Brasil-drakt
 // ============================================
 const avatar = new THREE.Group();
+let selectedGender = 'boy'; // Standard er gutt
 
 // Materialer
 const skinMaterial2 = new THREE.MeshLambertMaterial({ color: 0xd4a574 }); // Hudtone
@@ -1668,6 +1669,13 @@ const hairMaterial2 = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Sva
 const jerseyMaterial2 = new THREE.MeshLambertMaterial({ color: 0xf4d03f }); // Brasil gul
 const pantsMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Svart
 const shoeMaterial2 = new THREE.MeshLambertMaterial({ color: 0x2a2a2a }); // Mørke sko
+const lipstickMaterial = new THREE.MeshLambertMaterial({ color: 0xe74c3c }); // Rød leppestift
+
+// Referanser for animasjon (defineres senere)
+let leftArm2, rightArm2, leftLeg2, rightLeg2, leftHand2, rightHand2;
+
+// Hår-grupper for bytte
+let boyHairGroup, girlHairGroup, lipstick;
 
 // ============================================
 // HODE - Blocky Roblox-style
@@ -1678,32 +1686,73 @@ head2.position.y = 1.55;
 head2.castShadow = true;
 avatar.add(head2);
 
-// Hår - Blocky på toppen
-const hairGroup = new THREE.Group();
+// ============================================
+// GUTT-HÅR - Kort blocky
+// ============================================
+boyHairGroup = new THREE.Group();
 
-// Hovedhår (flat topp som Roblox)
 const mainHairGeometry = new THREE.BoxGeometry(0.58, 0.15, 0.58);
 const mainHair = new THREE.Mesh(mainHairGeometry, hairMaterial2);
 mainHair.position.y = 1.9;
-hairGroup.add(mainHair);
+boyHairGroup.add(mainHair);
 
-// Hår foran (litt puff)
 const frontHairGeometry = new THREE.BoxGeometry(0.5, 0.12, 0.15);
 const frontHair = new THREE.Mesh(frontHairGeometry, hairMaterial2);
 frontHair.position.set(0, 1.85, 0.25);
-hairGroup.add(frontHair);
+boyHairGroup.add(frontHair);
 
-// Sider av håret
 const sideHairGeometry = new THREE.BoxGeometry(0.08, 0.25, 0.5);
 const leftSideHair = new THREE.Mesh(sideHairGeometry, hairMaterial2);
 leftSideHair.position.set(-0.3, 1.75, 0);
-hairGroup.add(leftSideHair);
+boyHairGroup.add(leftSideHair);
 
 const rightSideHair = leftSideHair.clone();
 rightSideHair.position.x = 0.3;
-hairGroup.add(rightSideHair);
+boyHairGroup.add(rightSideHair);
 
-avatar.add(hairGroup);
+avatar.add(boyHairGroup);
+
+// ============================================
+// JENTE-HÅR - Langt hår
+// ============================================
+girlHairGroup = new THREE.Group();
+girlHairGroup.visible = false; // Skjult som standard
+
+// Topp av håret
+const girlTopHairGeometry = new THREE.BoxGeometry(0.6, 0.12, 0.6);
+const girlTopHair = new THREE.Mesh(girlTopHairGeometry, hairMaterial2);
+girlTopHair.position.y = 1.88;
+girlHairGroup.add(girlTopHair);
+
+// Pannelugg
+const bangsGeometry = new THREE.BoxGeometry(0.52, 0.15, 0.12);
+const bangs = new THREE.Mesh(bangsGeometry, hairMaterial2);
+bangs.position.set(0, 1.78, 0.28);
+girlHairGroup.add(bangs);
+
+// Sider av håret (lenger ned)
+const girlSideHairGeometry = new THREE.BoxGeometry(0.12, 0.7, 0.4);
+const girlLeftSideHair = new THREE.Mesh(girlSideHairGeometry, hairMaterial2);
+girlLeftSideHair.position.set(-0.32, 1.45, 0);
+girlHairGroup.add(girlLeftSideHair);
+
+const girlRightSideHair = girlLeftSideHair.clone();
+girlRightSideHair.position.x = 0.32;
+girlHairGroup.add(girlRightSideHair);
+
+// Langt hår bak
+const backHairGeometry = new THREE.BoxGeometry(0.55, 0.9, 0.15);
+const backHair = new THREE.Mesh(backHairGeometry, hairMaterial2);
+backHair.position.set(0, 1.35, -0.22);
+girlHairGroup.add(backHair);
+
+// Hårtupper (ender av langt hår)
+const hairTipsGeometry = new THREE.BoxGeometry(0.5, 0.15, 0.12);
+const hairTips = new THREE.Mesh(hairTipsGeometry, hairMaterial2);
+hairTips.position.set(0, 0.85, -0.22);
+girlHairGroup.add(hairTips);
+
+avatar.add(girlHairGroup);
 
 // ============================================
 // ANSIKT - Enkelt Roblox-style
@@ -1733,7 +1782,7 @@ const rightHighlight = leftHighlight.clone();
 rightHighlight.position.x = 0.14;
 avatar.add(rightHighlight);
 
-// Smil (bred Roblox-smil)
+// Smil (bred Roblox-smil) - byttes ut med leppestift for jente
 const smileGeometry = new THREE.BoxGeometry(0.25, 0.06, 0.02);
 const smileMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
 const smile = new THREE.Mesh(smileGeometry, smileMaterial);
@@ -1749,6 +1798,15 @@ avatar.add(leftCorner);
 const rightCorner = leftCorner.clone();
 rightCorner.position.x = 0.12;
 avatar.add(rightCorner);
+
+// Leppestift (kun synlig for jente)
+lipstick = new THREE.Mesh(
+    new THREE.BoxGeometry(0.2, 0.05, 0.02),
+    lipstickMaterial
+);
+lipstick.position.set(0, 1.42, 0.29);
+lipstick.visible = false;
+avatar.add(lipstick);
 
 // ============================================
 // OVERKROPP - Blocky Roblox torso
@@ -1788,25 +1846,27 @@ avatar.add(collar);
 const armGeometry2 = new THREE.BoxGeometry(0.18, 0.55, 0.18);
 
 // Venstre arm (gul drakt)
-const leftArm2 = new THREE.Mesh(armGeometry2, jerseyMaterial2);
+leftArm2 = new THREE.Mesh(armGeometry2, jerseyMaterial2);
 leftArm2.position.set(-0.39, 0.95, 0);
 leftArm2.castShadow = true;
 avatar.add(leftArm2);
 
 // Høyre arm
-const rightArm2 = leftArm2.clone();
-rightArm2.position.x = 0.39;
+rightArm2 = new THREE.Mesh(armGeometry2, jerseyMaterial2);
+rightArm2.position.set(0.39, 0.95, 0);
+rightArm2.castShadow = true;
 avatar.add(rightArm2);
 
 // Hender (blocky Roblox hands - hudfarge)
 const handGeometry2 = new THREE.BoxGeometry(0.18, 0.18, 0.18);
-const leftHand2 = new THREE.Mesh(handGeometry2, skinMaterial2);
+leftHand2 = new THREE.Mesh(handGeometry2, skinMaterial2);
 leftHand2.position.set(-0.39, 0.58, 0);
 leftHand2.castShadow = true;
 avatar.add(leftHand2);
 
-const rightHand2 = leftHand2.clone();
-rightHand2.position.x = 0.39;
+rightHand2 = new THREE.Mesh(handGeometry2, skinMaterial2);
+rightHand2.position.set(0.39, 0.58, 0);
+rightHand2.castShadow = true;
 avatar.add(rightHand2);
 
 // ============================================
@@ -1821,13 +1881,14 @@ avatar.add(pants);
 // Ben (blocky Roblox legs)
 const legGeometry2 = new THREE.BoxGeometry(0.2, 0.5, 0.2);
 
-const leftLeg2 = new THREE.Mesh(legGeometry2, pantsMaterial);
+leftLeg2 = new THREE.Mesh(legGeometry2, pantsMaterial);
 leftLeg2.position.set(-0.15, 0.15, 0);
 leftLeg2.castShadow = true;
 avatar.add(leftLeg2);
 
-const rightLeg2 = leftLeg2.clone();
-rightLeg2.position.x = 0.15;
+rightLeg2 = new THREE.Mesh(legGeometry2, pantsMaterial);
+rightLeg2.position.set(0.15, 0.15, 0);
+rightLeg2.castShadow = true;
 avatar.add(rightLeg2);
 
 // Sko (blocky Roblox feet)
@@ -1855,6 +1916,23 @@ avatar.add(rightSoleStripe);
 avatar.position.set(5, GROUND_LEVEL, 10);
 avatar.rotation.y = -0.5; // Ser mot boksen
 scene.add(avatar);
+
+// ============================================
+// FUNKSJON FOR Å BYTTE KARAKTER
+// ============================================
+function setCharacterGender(gender) {
+    selectedGender = gender;
+    
+    if (gender === 'girl') {
+        boyHairGroup.visible = false;
+        girlHairGroup.visible = true;
+        lipstick.visible = true;
+    } else {
+        boyHairGroup.visible = true;
+        girlHairGroup.visible = false;
+        lipstick.visible = false;
+    }
+}
 
 // ============================================
 // FEST-EFFEKTER (Aktiveres når musikk spiller)
@@ -3065,10 +3143,35 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+// ============================================
+// CHARACTER SELECTION SCREEN
+// ============================================
+const characterSelectScreen = document.getElementById('character-select');
+const characterCards = document.querySelectorAll('.character-card');
+
+characterCards.forEach(card => {
+    card.addEventListener('click', () => {
+        const gender = card.dataset.gender;
+        setCharacterGender(gender);
+        
+        // Skjul karaktervelger og start spillet
+        characterSelectScreen.style.opacity = '0';
+        setTimeout(() => {
+            characterSelectScreen.style.display = 'none';
+        }, 500);
+    });
+});
+
+// Loading screen -> Character selection
 setTimeout(() => {
     const loadingScreen = document.getElementById('loading');
     loadingScreen.style.opacity = '0';
-    setTimeout(() => loadingScreen.style.display = 'none', 500);
+    setTimeout(() => {
+        loadingScreen.style.display = 'none';
+        // Vis karaktervelger
+        characterSelectScreen.style.display = 'flex';
+        characterSelectScreen.style.opacity = '1';
+    }, 500);
 }, 2000);
 
 animate();

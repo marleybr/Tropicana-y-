@@ -272,6 +272,205 @@
         }
 
         /* ============================================
+           CHARACTER SELECTION SCREEN
+           ============================================ */
+        #character-select {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, 
+                #1a0a2e 0%, 
+                #4a1a6b 30%,
+                #ff6b35 70%, 
+                #ffd93d 100%);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #character-select h1 {
+            font-size: 2.5rem;
+            color: #f4d03f;
+            text-shadow: 
+                3px 3px 0 #1a5c4c,
+                6px 6px 15px rgba(0,0,0,0.5);
+            margin-bottom: 5px;
+            letter-spacing: 4px;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+        }
+
+        #character-select .subtitle {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .character-options {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .character-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 4px solid rgba(244, 208, 63, 0.5);
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 140px;
+        }
+
+        .character-card:hover {
+            transform: scale(1.08);
+            border-color: #f4d03f;
+            box-shadow: 0 0 30px rgba(244, 208, 63, 0.5);
+        }
+
+        .character-card:active {
+            transform: scale(0.98);
+        }
+
+        .character-preview {
+            width: 80px;
+            height: 120px;
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .preview-head {
+            width: 50px;
+            height: 50px;
+            background: #d4a574;
+            border-radius: 8px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .preview-hair-boy {
+            width: 52px;
+            height: 15px;
+            background: #1a1a1a;
+            border-radius: 6px 6px 0 0;
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .preview-hair-girl {
+            width: 55px;
+            height: 45px;
+            background: #1a1a1a;
+            border-radius: 10px 10px 5px 5px;
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .preview-hair-girl::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 50px;
+            background: #1a1a1a;
+            border-radius: 0 0 10px 10px;
+            top: 35px;
+            left: -5px;
+        }
+
+        .preview-hair-girl::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 50px;
+            background: #1a1a1a;
+            border-radius: 0 0 10px 10px;
+            top: 35px;
+            right: -5px;
+        }
+
+        .preview-body {
+            width: 55px;
+            height: 60px;
+            background: #f4d03f;
+            border-radius: 8px;
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 3px solid #009c3b;
+            border-top: none;
+        }
+
+        .preview-lips {
+            width: 15px;
+            height: 5px;
+            background: #e74c3c;
+            border-radius: 3px;
+            position: absolute;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .character-name {
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #character-select .hint {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-top: 25px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            #character-select h1 {
+                font-size: 1.8rem;
+            }
+            
+            .character-card {
+                padding: 20px;
+                min-width: 120px;
+            }
+            
+            .character-preview {
+                width: 70px;
+                height: 100px;
+            }
+            
+            .preview-head {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .preview-body {
+                width: 50px;
+                height: 50px;
+                top: 50px;
+            }
+        }
+
+        /* ============================================
            VIRTUAL JOYSTICK OG TOUCH KONTROLLER
            ============================================ */
         #mobile-controls {
@@ -401,6 +600,32 @@
         <span class="subtitle">LOCURA</span>
         <p>Laster jungelen...</p>
         <div class="loading-bar"></div>
+    </div>
+
+    <!-- Character Selection Screen -->
+    <div id="character-select">
+        <h1>VELG KARAKTER</h1>
+        <p class="subtitle">Hvem vil du være?</p>
+        <div class="character-options">
+            <div class="character-card" data-gender="boy">
+                <div class="character-preview boy-preview">
+                    <div class="preview-head"></div>
+                    <div class="preview-hair-boy"></div>
+                    <div class="preview-body"></div>
+                </div>
+                <span class="character-name">Gutt 👦</span>
+            </div>
+            <div class="character-card" data-gender="girl">
+                <div class="character-preview girl-preview">
+                    <div class="preview-head"></div>
+                    <div class="preview-hair-girl"></div>
+                    <div class="preview-body"></div>
+                    <div class="preview-lips"></div>
+                </div>
+                <span class="character-name">Jente 👧</span>
+            </div>
+        </div>
+        <p class="hint">Klikk for å velge</p>
     </div>
     
     <div id="game-container"></div>
