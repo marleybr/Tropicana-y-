@@ -10,12 +10,12 @@ import * as THREE from 'three';
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
     || (navigator.maxTouchPoints > 0 && window.innerWidth < 1024);
 
-// Balanserte innstillinger - god kvalitet + batterivennlig
+// Optimaliserte innstillinger for mobil
 const PERFORMANCE = {
-    pixelRatio: isMobile ? Math.min(window.devicePixelRatio, 1.5) : Math.min(window.devicePixelRatio, 2),
-    shadows: true,  // Behold shadows for visuell kvalitet
-    antialias: !isMobile,  // Antialias kun på desktop
-    reducedEffects: false  // Behold alle effekter
+    pixelRatio: isMobile ? 1.0 : Math.min(window.devicePixelRatio, 2),
+    shadows: !isMobile,  // Skru av shadows på mobil for bedre ytelse
+    antialias: !isMobile,
+    reducedEffects: isMobile  // Reduser effekter på mobil
 };
 
 // Scene setup
@@ -24,12 +24,12 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ 
     antialias: PERFORMANCE.antialias,
-    powerPreference: 'default'
+    powerPreference: isMobile ? 'low-power' : 'high-performance'
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(PERFORMANCE.pixelRatio);
 renderer.shadowMap.enabled = PERFORMANCE.shadows;
-renderer.shadowMap.type = isMobile ? THREE.BasicShadowMap : THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = THREE.BasicShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.2;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -41,8 +41,9 @@ document.addEventListener('visibilitychange', () => {
     isTabVisible = !document.hidden;
 });
 
-console.log(`🎮 Device: ${isMobile ? 'MOBILE' : 'DESKTOP'}`);
+console.log(`🎮 Device: ${isMobile ? 'MOBILE (optimized)' : 'DESKTOP'}`);
 console.log(`   - Pixel Ratio: ${PERFORMANCE.pixelRatio}`);
+console.log(`   - Shadows: ${PERFORMANCE.shadows}`);
 
 // ============================================
 // BAKKENIVÅ - Alle objekter plasseres relativt til dette
@@ -2578,23 +2579,27 @@ function animate() {
     // Oppdater hav
     oceanMaterial.uniforms.time.value = time;
     
-    // Animer partikler (støv i sollys)
-    const particlePos = particles.geometry.attributes.position.array;
-    for (let i = 0; i < particleCount; i++) {
-        particlePos[i * 3 + 1] += Math.sin(time + i) * 0.002;
-        particlePos[i * 3] += Math.cos(time * 0.5 + i) * 0.001;
+    // Animer partikler (støv i sollys) - skip på mobil
+    if (!PERFORMANCE.reducedEffects) {
+        const particlePos = particles.geometry.attributes.position.array;
+        for (let i = 0; i < particleCount; i++) {
+            particlePos[i * 3 + 1] += Math.sin(time + i) * 0.002;
+            particlePos[i * 3] += Math.cos(time * 0.5 + i) * 0.001;
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
     }
-    particles.geometry.attributes.position.needsUpdate = true;
     
-    // Animer ildfluer (blinkende og bevegelige)
-    const fireflyPos = fireflies.geometry.attributes.position.array;
-    for (let i = 0; i < fireflyCount; i++) {
-        fireflyPos[i * 3] += Math.sin(time * 2 + i * 0.5) * 0.02;
-        fireflyPos[i * 3 + 1] += Math.cos(time * 1.5 + i * 0.3) * 0.01;
-        fireflyPos[i * 3 + 2] += Math.sin(time * 1.8 + i * 0.7) * 0.02;
+    // Animer ildfluer (blinkende og bevegelige) - skip på mobil
+    if (!PERFORMANCE.reducedEffects) {
+        const fireflyPos = fireflies.geometry.attributes.position.array;
+        for (let i = 0; i < fireflyCount; i++) {
+            fireflyPos[i * 3] += Math.sin(time * 2 + i * 0.5) * 0.02;
+            fireflyPos[i * 3 + 1] += Math.cos(time * 1.5 + i * 0.3) * 0.01;
+            fireflyPos[i * 3 + 2] += Math.sin(time * 1.8 + i * 0.7) * 0.02;
+        }
+        fireflies.geometry.attributes.position.needsUpdate = true;
+        fireflyMaterial.opacity = 0.5 + Math.sin(time * 3) * 0.3;
     }
-    fireflies.geometry.attributes.position.needsUpdate = true;
-    fireflyMaterial.opacity = 0.5 + Math.sin(time * 3) * 0.3;
     
     // Animer skyer
     clouds.forEach(cloud => {
@@ -2602,28 +2607,30 @@ function animate() {
         if (cloud.position.x > 200) cloud.position.x = -200;
     });
     
-    // Animer sommerfugler
-    butterflies.forEach(butterfly => {
-        const data = butterfly.userData;
-        data.angle += 0.02 * data.speed;
-        data.phase += 0.1;
-        
-        butterfly.position.x += Math.cos(data.angle) * 0.05;
-        butterfly.position.z += Math.sin(data.angle) * 0.05;
-        butterfly.position.y = data.baseY + Math.sin(data.phase) * 0.3;
-        
-        // Vinge-animasjon
-        data.leftWing.rotation.y = Math.sin(time * 15) * 0.5;
-        data.rightWing.rotation.y = -Math.sin(time * 15) * 0.5;
-        
-        butterfly.rotation.y = data.angle + Math.PI / 2;
-        
-        // Hold innenfor øya
-        const dist = Math.sqrt(butterfly.position.x ** 2 + butterfly.position.z ** 2);
-        if (dist > 35) {
-            data.angle += Math.PI;
-        }
-    });
+    // Animer sommerfugler - skip på mobil
+    if (!PERFORMANCE.reducedEffects) {
+        butterflies.forEach(butterfly => {
+            const data = butterfly.userData;
+            data.angle += 0.02 * data.speed;
+            data.phase += 0.1;
+            
+            butterfly.position.x += Math.cos(data.angle) * 0.05;
+            butterfly.position.z += Math.sin(data.angle) * 0.05;
+            butterfly.position.y = data.baseY + Math.sin(data.phase) * 0.3;
+            
+            // Vinge-animasjon
+            data.leftWing.rotation.y = Math.sin(time * 15) * 0.5;
+            data.rightWing.rotation.y = -Math.sin(time * 15) * 0.5;
+            
+            butterfly.rotation.y = data.angle + Math.PI / 2;
+            
+            // Hold innenfor øya
+            const dist = Math.sqrt(butterfly.position.x ** 2 + butterfly.position.z ** 2);
+            if (dist > 35) {
+                data.angle += Math.PI;
+            }
+        });
+    }
     
     // Animer CD når musikk spiller
     if (isPlaying) {
