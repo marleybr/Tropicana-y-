@@ -1659,335 +1659,198 @@ scene.add(cassettePlayer);
 const musicNotes = [];
 
 // ============================================
-// AVATAR - Francisco (Slank, kort hår, solbriller, Brasil-drakt)
+// AVATAR - Roblox/Lego Style med Brasil-drakt
 // ============================================
 const avatar = new THREE.Group();
 
-// Hode
-const headGeometry2 = new THREE.SphereGeometry(0.30, 24, 24);
-const skinMaterial2 = new THREE.MeshLambertMaterial({ color: 0xd4a574 }); // Lys-medium hudtone
+// Materialer
+const skinMaterial2 = new THREE.MeshLambertMaterial({ color: 0xd4a574 }); // Hudtone
+const hairMaterial2 = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Svart hår
+const jerseyMaterial2 = new THREE.MeshLambertMaterial({ color: 0xf4d03f }); // Brasil gul
+const pantsMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Svart
+const shoeMaterial2 = new THREE.MeshLambertMaterial({ color: 0x2a2a2a }); // Mørke sko
+
+// ============================================
+// HODE - Blocky Roblox-style
+// ============================================
+const headGeometry2 = new THREE.BoxGeometry(0.55, 0.55, 0.55);
 const head2 = new THREE.Mesh(headGeometry2, skinMaterial2);
 head2.position.y = 1.55;
-head2.scale.set(0.95, 1.1, 0.9);
 head2.castShadow = true;
 avatar.add(head2);
 
-// Kort, stylet hår (swept up style)
+// Hår - Blocky på toppen
 const hairGroup = new THREE.Group();
-const hairMaterial2 = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
 
-// Kort base-hår
-const baseHairGeometry = new THREE.SphereGeometry(0.32, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.4);
-const baseHair = new THREE.Mesh(baseHairGeometry, hairMaterial2);
-baseHair.position.y = 1.62;
-baseHair.scale.set(0.95, 0.6, 0.9);
-hairGroup.add(baseHair);
+// Hovedhår (flat topp som Roblox)
+const mainHairGeometry = new THREE.BoxGeometry(0.58, 0.15, 0.58);
+const mainHair = new THREE.Mesh(mainHairGeometry, hairMaterial2);
+mainHair.position.y = 1.9;
+hairGroup.add(mainHair);
 
-// Stylet topp (swept up)
-const topHairGeometry = new THREE.BoxGeometry(0.4, 0.15, 0.3);
-const topHair = new THREE.Mesh(topHairGeometry, hairMaterial2);
-topHair.position.set(0, 1.82, -0.02);
-topHair.rotation.x = -0.2;
-hairGroup.add(topHair);
+// Hår foran (litt puff)
+const frontHairGeometry = new THREE.BoxGeometry(0.5, 0.12, 0.15);
+const frontHair = new THREE.Mesh(frontHairGeometry, hairMaterial2);
+frontHair.position.set(0, 1.85, 0.25);
+hairGroup.add(frontHair);
 
-// Hår-tekstur detaljer på toppen
-for (let i = 0; i < 8; i++) {
-    const strandGeometry = new THREE.BoxGeometry(0.05, 0.12, 0.08);
-    const strand = new THREE.Mesh(strandGeometry, hairMaterial2);
-    strand.position.set(
-        -0.15 + i * 0.04,
-        1.85,
-        0.05 - Math.random() * 0.05
-    );
-    strand.rotation.z = (Math.random() - 0.5) * 0.3;
-    strand.rotation.x = -0.3;
-    hairGroup.add(strand);
-}
-
-// Sider av håret (kort fade)
-const sideHairGeometry = new THREE.BoxGeometry(0.05, 0.2, 0.25);
+// Sider av håret
+const sideHairGeometry = new THREE.BoxGeometry(0.08, 0.25, 0.5);
 const leftSideHair = new THREE.Mesh(sideHairGeometry, hairMaterial2);
-leftSideHair.position.set(-0.28, 1.6, 0);
+leftSideHair.position.set(-0.3, 1.75, 0);
 hairGroup.add(leftSideHair);
 
 const rightSideHair = leftSideHair.clone();
-rightSideHair.position.x = 0.28;
+rightSideHair.position.x = 0.3;
 hairGroup.add(rightSideHair);
 
 avatar.add(hairGroup);
 
 // ============================================
-// SOLBRILLER (Sporty stil)
-// ============================================
-const sunglassesGroup = new THREE.Group();
-const glassMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x111111, 
-    metalness: 0.9,
-    roughness: 0.1
-});
-const frameMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0x1a1a1a,
-    metalness: 0.5,
-    roughness: 0.3
-});
-
-// Venstre glass (wrap-around style)
-const leftLensShape = new THREE.Shape();
-leftLensShape.moveTo(0, 0);
-leftLensShape.lineTo(0.12, 0.02);
-leftLensShape.lineTo(0.14, 0.06);
-leftLensShape.lineTo(0.12, 0.08);
-leftLensShape.lineTo(0, 0.07);
-leftLensShape.lineTo(-0.02, 0.04);
-leftLensShape.closePath();
-
-const lensExtrudeSettings = { depth: 0.04, bevelEnabled: true, bevelSize: 0.005, bevelThickness: 0.005 };
-const leftLensGeometry = new THREE.ExtrudeGeometry(leftLensShape, lensExtrudeSettings);
-const leftLens = new THREE.Mesh(leftLensGeometry, glassMaterial);
-leftLens.position.set(-0.06, 1.54, 0.26);
-leftLens.rotation.y = 0.2;
-sunglassesGroup.add(leftLens);
-
-// Høyre glass
-const rightLens = leftLens.clone();
-rightLens.position.x = 0.06;
-rightLens.rotation.y = -0.2;
-rightLens.scale.x = -1;
-sunglassesGroup.add(rightLens);
-
-// Bro mellom glassene
-const bridgeGeometry = new THREE.BoxGeometry(0.06, 0.015, 0.02);
-const bridge = new THREE.Mesh(bridgeGeometry, frameMaterial);
-bridge.position.set(0, 1.57, 0.3);
-sunglassesGroup.add(bridge);
-
-// Stenger (arms)
-const templeGeometry = new THREE.BoxGeometry(0.22, 0.015, 0.01);
-const leftTemple = new THREE.Mesh(templeGeometry, frameMaterial);
-leftTemple.position.set(-0.2, 1.57, 0.15);
-leftTemple.rotation.y = Math.PI / 2 - 0.3;
-sunglassesGroup.add(leftTemple);
-
-const rightTemple = leftTemple.clone();
-rightTemple.position.x = 0.2;
-rightTemple.rotation.y = -(Math.PI / 2 - 0.3);
-sunglassesGroup.add(rightTemple);
-
-avatar.add(sunglassesGroup);
-
-// Øyenbryn (synlige over solbrillene)
-const eyebrowGeometry = new THREE.BoxGeometry(0.1, 0.025, 0.02);
-const eyebrowMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-const leftEyebrow = new THREE.Mesh(eyebrowGeometry, eyebrowMaterial);
-leftEyebrow.position.set(-0.1, 1.66, 0.27);
-leftEyebrow.rotation.z = 0.1;
-avatar.add(leftEyebrow);
-
-const rightEyebrow = leftEyebrow.clone();
-rightEyebrow.position.x = 0.1;
-rightEyebrow.rotation.z = -0.1;
-avatar.add(rightEyebrow);
-
-// Nese
-const noseGeometry = new THREE.ConeGeometry(0.035, 0.07, 8);
-const nose = new THREE.Mesh(noseGeometry, skinMaterial2);
-nose.position.set(0, 1.48, 0.28);
-nose.rotation.x = Math.PI;
-avatar.add(nose);
-
-// Munn (lett smil)
-const mouthGeometry = new THREE.TorusGeometry(0.04, 0.008, 8, 16, Math.PI);
-const mouthMaterial = new THREE.MeshLambertMaterial({ color: 0xcc8866 });
-const mouth = new THREE.Mesh(mouthGeometry, mouthMaterial);
-mouth.position.set(0, 1.40, 0.26);
-mouth.rotation.x = Math.PI;
-avatar.add(mouth);
-
-// Ører
-const earGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-const leftEar = new THREE.Mesh(earGeometry, skinMaterial2);
-leftEar.position.set(-0.28, 1.55, 0.05);
-leftEar.scale.set(0.5, 1, 0.7);
-avatar.add(leftEar);
-
-const rightEar = leftEar.clone();
-rightEar.position.x = 0.28;
-avatar.add(rightEar);
-
-// ============================================
-// KROPP - Slank bygning med Brasil-drakt
+// ANSIKT - Enkelt Roblox-style
 // ============================================
 
-// Nakke
-const neckGeometry = new THREE.CylinderGeometry(0.1, 0.12, 0.12, 12);
-const neck = new THREE.Mesh(neckGeometry, skinMaterial2);
-neck.position.y = 1.32;
-avatar.add(neck);
+// Øyne (enkle svarte firkanter)
+const eyeGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.02);
+const eyeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
 
-// Overkropp - Brasil-drakt (slank)
-const torsoGeometry = new THREE.CylinderGeometry(0.22, 0.25, 0.55, 16);
-const jerseyMaterial2 = new THREE.MeshLambertMaterial({ color: 0xf4d03f }); // Brasil gul
+const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+leftEye.position.set(-0.12, 1.58, 0.28);
+avatar.add(leftEye);
+
+const rightEye = leftEye.clone();
+rightEye.position.x = 0.12;
+avatar.add(rightEye);
+
+// Hvite øyehighlights (Roblox-stil)
+const highlightGeometry = new THREE.BoxGeometry(0.04, 0.04, 0.02);
+const highlightMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+
+const leftHighlight = new THREE.Mesh(highlightGeometry, highlightMaterial);
+leftHighlight.position.set(-0.1, 1.6, 0.29);
+avatar.add(leftHighlight);
+
+const rightHighlight = leftHighlight.clone();
+rightHighlight.position.x = 0.14;
+avatar.add(rightHighlight);
+
+// Smil (bred Roblox-smil)
+const smileGeometry = new THREE.BoxGeometry(0.25, 0.06, 0.02);
+const smileMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+const smile = new THREE.Mesh(smileGeometry, smileMaterial);
+smile.position.set(0, 1.42, 0.28);
+avatar.add(smile);
+
+// Munnviker (oppover for smil)
+const cornerGeometry = new THREE.BoxGeometry(0.06, 0.06, 0.02);
+const leftCorner = new THREE.Mesh(cornerGeometry, smileMaterial);
+leftCorner.position.set(-0.12, 1.44, 0.28);
+avatar.add(leftCorner);
+
+const rightCorner = leftCorner.clone();
+rightCorner.position.x = 0.12;
+avatar.add(rightCorner);
+
+// ============================================
+// OVERKROPP - Blocky Roblox torso
+// ============================================
+const torsoGeometry = new THREE.BoxGeometry(0.6, 0.7, 0.35);
 const torso2 = new THREE.Mesh(torsoGeometry, jerseyMaterial2);
-torso2.position.y = 0.98;
+torso2.position.y = 0.95;
 torso2.castShadow = true;
 avatar.add(torso2);
 
-// Brasil CBF-logo
-const logoShape = new THREE.Shape();
-logoShape.moveTo(0, 0.10);
-logoShape.lineTo(0.08, 0);
-logoShape.lineTo(0, -0.10);
-logoShape.lineTo(-0.08, 0);
-logoShape.closePath();
-const logoGeometry = new THREE.ShapeGeometry(logoShape);
-const logoMaterial = new THREE.MeshLambertMaterial({ color: 0x009c3b, side: THREE.DoubleSide });
+// Brasil CBF-logo (forenklet diamant)
+const logoGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.02);
+const logoMaterial = new THREE.MeshLambertMaterial({ color: 0x009c3b });
 const logo = new THREE.Mesh(logoGeometry, logoMaterial);
-logo.position.set(0, 1.02, 0.23);
+logo.position.set(0, 1.0, 0.19);
+logo.rotation.z = Math.PI / 4;
 avatar.add(logo);
 
 // Blå sirkel i logoen
-const logoCircleGeometry = new THREE.CircleGeometry(0.04, 16);
-const logoCircleMaterial = new THREE.MeshLambertMaterial({ color: 0x002776, side: THREE.DoubleSide });
+const logoCircleGeometry = new THREE.BoxGeometry(0.1, 0.1, 0.02);
+const logoCircleMaterial = new THREE.MeshLambertMaterial({ color: 0x002776 });
 const logoCircle = new THREE.Mesh(logoCircleGeometry, logoCircleMaterial);
-logoCircle.position.set(0, 1.02, 0.235);
+logoCircle.position.set(0, 1.0, 0.2);
+logoCircle.rotation.z = Math.PI / 4;
 avatar.add(logoCircle);
 
-// Grønn krage
-const collarGeometry = new THREE.TorusGeometry(0.15, 0.025, 8, 16);
+// Grønn krage-stripe
+const collarGeometry = new THREE.BoxGeometry(0.5, 0.08, 0.36);
 const collarMaterial = new THREE.MeshLambertMaterial({ color: 0x009c3b });
 const collar = new THREE.Mesh(collarGeometry, collarMaterial);
 collar.position.y = 1.26;
-collar.rotation.x = Math.PI / 2;
 avatar.add(collar);
 
 // ============================================
-// BRASIL-FLAGG OVER SKULDRENE
+// ARMER - Roblox cylinder-armer
 // ============================================
-const flagGroup = new THREE.Group();
+const armGeometry2 = new THREE.BoxGeometry(0.18, 0.55, 0.18);
 
-// Flagg-stoff (drapert over skuldrene)
-const flagMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0x009c3b, // Grønn
-    side: THREE.DoubleSide 
-});
-const flagYellowMaterial = new THREE.MeshLambertMaterial({ 
-    color: 0xf4d03f, // Gul
-    side: THREE.DoubleSide 
-});
-
-// Venstre side av flagget
-const leftFlagGeometry = new THREE.PlaneGeometry(0.35, 0.6);
-const leftFlag = new THREE.Mesh(leftFlagGeometry, flagMaterial);
-leftFlag.position.set(-0.32, 0.95, 0.05);
-leftFlag.rotation.y = 0.4;
-leftFlag.rotation.z = 0.1;
-flagGroup.add(leftFlag);
-
-// Gul diamant på venstre
-const leftDiamondGeometry = new THREE.PlaneGeometry(0.15, 0.25);
-const leftDiamond = new THREE.Mesh(leftDiamondGeometry, flagYellowMaterial);
-leftDiamond.position.set(-0.32, 0.95, 0.06);
-leftDiamond.rotation.y = 0.4;
-leftDiamond.rotation.z = 0.1 + Math.PI/4;
-flagGroup.add(leftDiamond);
-
-// Høyre side av flagget
-const rightFlag = leftFlag.clone();
-rightFlag.position.x = 0.32;
-rightFlag.rotation.y = -0.4;
-rightFlag.rotation.z = -0.1;
-flagGroup.add(rightFlag);
-
-// Gul diamant på høyre
-const rightDiamond = leftDiamond.clone();
-rightDiamond.position.x = 0.32;
-rightDiamond.rotation.y = -0.4;
-rightDiamond.rotation.z = -0.1 + Math.PI/4;
-flagGroup.add(rightDiamond);
-
-avatar.add(flagGroup);
-
-// ============================================
-// ARMER (Slanke)
-// ============================================
-const armGeometry2 = new THREE.CapsuleGeometry(0.055, 0.32, 4, 8);
-
+// Venstre arm (gul drakt)
 const leftArm2 = new THREE.Mesh(armGeometry2, jerseyMaterial2);
-leftArm2.position.set(-0.30, 1.0, 0);
-leftArm2.rotation.z = 0.25;
+leftArm2.position.set(-0.39, 0.95, 0);
 leftArm2.castShadow = true;
 avatar.add(leftArm2);
 
+// Høyre arm
 const rightArm2 = leftArm2.clone();
-rightArm2.position.x = 0.30;
-rightArm2.rotation.z = -0.25;
+rightArm2.position.x = 0.39;
 avatar.add(rightArm2);
 
-// Underarmer (hud)
-const forearmGeometry = new THREE.CapsuleGeometry(0.045, 0.2, 4, 8);
-const leftForearm = new THREE.Mesh(forearmGeometry, skinMaterial2);
-leftForearm.position.set(-0.38, 0.72, 0);
-leftForearm.rotation.z = 0.15;
-avatar.add(leftForearm);
-
-const rightForearm = leftForearm.clone();
-rightForearm.position.x = 0.38;
-rightForearm.rotation.z = -0.15;
-avatar.add(rightForearm);
-
-// Hender
-const handGeometry2 = new THREE.SphereGeometry(0.055, 12, 12);
+// Hender (blocky Roblox hands - hudfarge)
+const handGeometry2 = new THREE.BoxGeometry(0.18, 0.18, 0.18);
 const leftHand2 = new THREE.Mesh(handGeometry2, skinMaterial2);
-leftHand2.position.set(-0.42, 0.55, 0);
+leftHand2.position.set(-0.39, 0.58, 0);
 leftHand2.castShadow = true;
 avatar.add(leftHand2);
 
 const rightHand2 = leftHand2.clone();
-rightHand2.position.x = 0.42;
+rightHand2.position.x = 0.39;
 avatar.add(rightHand2);
 
 // ============================================
-// SVARTE BUKSER (ikke jeans)
+// UNDERKROPP - Roblox-stil bukser
 // ============================================
-const pantsGeometry = new THREE.CylinderGeometry(0.23, 0.2, 0.3, 16);
-const pantsMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Svart
-const pants = new THREE.Mesh(pantsGeometry, pantsMaterial);
-pants.position.y = 0.55;
+const hipsGeometry = new THREE.BoxGeometry(0.55, 0.25, 0.32);
+const pants = new THREE.Mesh(hipsGeometry, pantsMaterial);
+pants.position.y = 0.5;
 pants.castShadow = true;
 avatar.add(pants);
 
-// Ben (slanke)
-const legGeometry2 = new THREE.CapsuleGeometry(0.07, 0.42, 4, 8);
+// Ben (blocky Roblox legs)
+const legGeometry2 = new THREE.BoxGeometry(0.2, 0.5, 0.2);
+
 const leftLeg2 = new THREE.Mesh(legGeometry2, pantsMaterial);
-leftLeg2.position.set(-0.1, 0.22, 0);
+leftLeg2.position.set(-0.15, 0.15, 0);
 leftLeg2.castShadow = true;
 avatar.add(leftLeg2);
 
 const rightLeg2 = leftLeg2.clone();
-rightLeg2.position.x = 0.1;
+rightLeg2.position.x = 0.15;
 avatar.add(rightLeg2);
 
-// Sko (mørke sneakers)
-const shoeGeometry2 = new THREE.BoxGeometry(0.1, 0.07, 0.2);
-const shoeMaterial2 = new THREE.MeshLambertMaterial({ color: 0x2a2a2a });
+// Sko (blocky Roblox feet)
+const shoeGeometry2 = new THREE.BoxGeometry(0.22, 0.12, 0.32);
 const leftShoe2 = new THREE.Mesh(shoeGeometry2, shoeMaterial2);
-leftShoe2.position.set(-0.1, 0.01, 0.03);
+leftShoe2.position.set(-0.15, -0.04, 0.05);
 leftShoe2.castShadow = true;
 avatar.add(leftShoe2);
 
 const rightShoe2 = leftShoe2.clone();
-rightShoe2.position.x = 0.1;
+rightShoe2.position.x = 0.15;
 avatar.add(rightShoe2);
 
-// Hvit såle-stripe
-const soleStripeGeometry = new THREE.BoxGeometry(0.1, 0.015, 0.2);
+// Hvit såle-stripe (Nike-stil)
+const soleStripeGeometry = new THREE.BoxGeometry(0.22, 0.03, 0.32);
 const soleStripeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
 const leftSoleStripe = new THREE.Mesh(soleStripeGeometry, soleStripeMaterial);
-leftSoleStripe.position.set(-0.1, -0.02, 0.03);
+leftSoleStripe.position.set(-0.15, -0.08, 0.05);
 avatar.add(leftSoleStripe);
 
 const rightSoleStripe = leftSoleStripe.clone();
-rightSoleStripe.position.x = 0.1;
+rightSoleStripe.position.x = 0.15;
 avatar.add(rightSoleStripe);
 
 avatar.position.set(5, GROUND_LEVEL, 10);
