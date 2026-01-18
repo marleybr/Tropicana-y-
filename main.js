@@ -2728,16 +2728,8 @@ function animate() {
         const djBounce = Math.abs(Math.sin(djBouncePhase * 2)) * 0.05;
         djPerson.position.y = djBounce;
         
-        // Hode nikker til musikken
-        djHead.rotation.x = Math.sin(djBouncePhase * 4) * 0.15;
-        djHead.rotation.z = Math.sin(djBouncePhase * 2) * 0.08;
-        djHair.rotation.x = djHead.rotation.x;
-        djHair.rotation.z = djHead.rotation.z;
-        
-        // Hodetelefoner følger hodet
-        djHpBand.rotation.x = djHead.rotation.z;
-        djHpLeftCup.rotation.x = djHead.rotation.z;
-        djHpRightCup.rotation.x = djHead.rotation.z;
+        // Roblox-stil: Hele kroppen beveger seg, ikke bare hodet
+        // (Blocky karakterer ser bedre ut uten separat hode-rotasjon)
         
         // Armer beveger seg som om han justerer mikseren
         djLeftArm.rotation.x = -0.8 + Math.sin(djBouncePhase * 3) * 0.2;
