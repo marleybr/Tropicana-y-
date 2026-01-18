@@ -1375,256 +1375,255 @@ djBoothGroup.add(headphonesOnTable);
 
 dj.add(djBoothGroup);
 
-// ========== DJ-PERSONEN (MER REALISTISK) ==========
+// ========== DJ-PERSONEN (ROBLOX/LEGO STYLE MED BRASIL-DRAKT + HEADSET) ==========
 const djPerson = new THREE.Group();
 
-// Hode (mer detaljert)
-const djHeadGeometry = new THREE.SphereGeometry(0.24, 32, 32);
-const djSkinMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xc68642, 
-    roughness: 0.8,
-    metalness: 0.1
-});
+// Materialer for DJ
+const djSkinMaterial = new THREE.MeshLambertMaterial({ color: 0xd4a574 }); // Hudtone
+const djHairMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Svart hår
+const djJerseyMaterial = new THREE.MeshLambertMaterial({ color: 0xf4d03f }); // Brasil gul
+const djPantsMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a }); // Svart bukse
+
+// ============================================
+// DJ HODE - Blocky Roblox-style
+// ============================================
+const djHeadGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
 const djHead = new THREE.Mesh(djHeadGeometry, djSkinMaterial);
-djHead.position.y = 1.65;
-djHead.scale.set(1, 1.1, 0.95);
+djHead.position.y = 1.55;
+djHead.castShadow = true;
 djPerson.add(djHead);
 
-// Hår (kort fade-stil)
-const djHairMaterial = new THREE.MeshLambertMaterial({ color: 0x0a0a0a });
-const djHairGeometry = new THREE.SphereGeometry(0.26, 16, 16, 0, Math.PI * 2, 0, Math.PI * 0.45);
-const djHair = new THREE.Mesh(djHairGeometry, djHairMaterial);
-djHair.position.y = 1.72;
-djHair.scale.set(1, 0.5, 0.95);
-djPerson.add(djHair);
+// DJ Hår - Blocky på toppen
+const djHairGroup = new THREE.Group();
 
-// Hår-detaljer (fade på sidene)
-const fadeGeometry = new THREE.BoxGeometry(0.02, 0.15, 0.2);
-const fadeMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-const leftFade = new THREE.Mesh(fadeGeometry, fadeMaterial);
-leftFade.position.set(-0.23, 1.62, 0);
-djPerson.add(leftFade);
-const rightFade = leftFade.clone();
-rightFade.position.x = 0.23;
-djPerson.add(rightFade);
+// Hovedhår (flat topp som Roblox)
+const djMainHairGeometry = new THREE.BoxGeometry(0.52, 0.12, 0.52);
+const djMainHair = new THREE.Mesh(djMainHairGeometry, djHairMaterial);
+djMainHair.position.y = 1.86;
+djHairGroup.add(djMainHair);
 
-// Øyenbryn (DJ)
-const djEyebrowGeom = new THREE.BoxGeometry(0.08, 0.015, 0.02);
-const djEyebrowMat = new THREE.MeshLambertMaterial({ color: 0x0a0a0a });
-const djLeftEyebrow = new THREE.Mesh(djEyebrowGeom, djEyebrowMat);
-djLeftEyebrow.position.set(-0.07, 1.72, 0.2);
-djLeftEyebrow.rotation.z = -0.1;
-djPerson.add(djLeftEyebrow);
-const djRightEyebrow = djLeftEyebrow.clone();
-djRightEyebrow.position.x = 0.07;
-djRightEyebrow.rotation.z = 0.1;
-djPerson.add(djRightEyebrow);
+// Hår foran
+const djFrontHairGeometry = new THREE.BoxGeometry(0.45, 0.1, 0.12);
+const djFrontHair = new THREE.Mesh(djFrontHairGeometry, djHairMaterial);
+djFrontHair.position.set(0, 1.82, 0.22);
+djHairGroup.add(djFrontHair);
 
-// Øyne (mer detaljerte)
-const djEyeWhiteGeom = new THREE.SphereGeometry(0.035, 12, 12);
-const djEyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-const djLeftEyeWhite = new THREE.Mesh(djEyeWhiteGeom, djEyeWhiteMat);
-djLeftEyeWhite.position.set(-0.07, 1.67, 0.2);
-djLeftEyeWhite.scale.z = 0.5;
-djPerson.add(djLeftEyeWhite);
-const djRightEyeWhite = djLeftEyeWhite.clone();
-djRightEyeWhite.position.x = 0.07;
-djPerson.add(djRightEyeWhite);
+// Sider av håret
+const djSideHairGeometry = new THREE.BoxGeometry(0.07, 0.22, 0.45);
+const djLeftSideHair = new THREE.Mesh(djSideHairGeometry, djHairMaterial);
+djLeftSideHair.position.set(-0.27, 1.72, 0);
+djHairGroup.add(djLeftSideHair);
 
-const djPupilGeom = new THREE.SphereGeometry(0.018, 8, 8);
-const djPupilMat = new THREE.MeshBasicMaterial({ color: 0x2a1a0a });
-const djLeftPupil = new THREE.Mesh(djPupilGeom, djPupilMat);
-djLeftPupil.position.set(-0.07, 1.67, 0.22);
-djPerson.add(djLeftPupil);
-const djRightPupil = djLeftPupil.clone();
-djRightPupil.position.x = 0.07;
-djPerson.add(djRightPupil);
+const djRightSideHair = djLeftSideHair.clone();
+djRightSideHair.position.x = 0.27;
+djHairGroup.add(djRightSideHair);
 
-// Nese
-const djNoseGeom = new THREE.ConeGeometry(0.025, 0.05, 8);
-const djNose = new THREE.Mesh(djNoseGeom, djSkinMaterial);
-djNose.position.set(0, 1.62, 0.22);
-djNose.rotation.x = Math.PI;
-djPerson.add(djNose);
+const djHair = djHairGroup;
+djPerson.add(djHairGroup);
 
-// Munn
-const djMouthGeom = new THREE.BoxGeometry(0.06, 0.015, 0.01);
-const djMouthMat = new THREE.MeshLambertMaterial({ color: 0x8b4513 });
-const djMouth = new THREE.Mesh(djMouthGeom, djMouthMat);
-djMouth.position.set(0, 1.55, 0.2);
-djPerson.add(djMouth);
+// ============================================
+// DJ ANSIKT - Enkelt Roblox-style
+// ============================================
 
-// Skjegg-stubber (5 o'clock shadow)
-const stubbleGeom = new THREE.BoxGeometry(0.15, 0.08, 0.02);
-const stubbleMat = new THREE.MeshLambertMaterial({ color: 0x2a2a2a, transparent: true, opacity: 0.3 });
-const stubble = new THREE.Mesh(stubbleGeom, stubbleMat);
-stubble.position.set(0, 1.52, 0.18);
-djPerson.add(stubble);
+// Øyne (enkle svarte firkanter)
+const djEyeGeometry = new THREE.BoxGeometry(0.09, 0.09, 0.02);
+const djEyeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
 
-// Ører
-const djEarGeom = new THREE.SphereGeometry(0.04, 8, 8);
-const djLeftEar = new THREE.Mesh(djEarGeom, djSkinMaterial);
-djLeftEar.position.set(-0.23, 1.65, 0.02);
-djLeftEar.scale.set(0.5, 1, 0.7);
-djPerson.add(djLeftEar);
-const djRightEar = djLeftEar.clone();
-djRightEar.position.x = 0.23;
-djPerson.add(djRightEar);
+const djLeftEye = new THREE.Mesh(djEyeGeometry, djEyeMaterial);
+djLeftEye.position.set(-0.1, 1.58, 0.26);
+djPerson.add(djLeftEye);
 
-// Hodetelefoner (PROFESJONELLE - som Pioneer HDJ)
-const djHpMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.3, roughness: 0.7 });
-const djHpBandGeometry = new THREE.TorusGeometry(0.22, 0.02, 12, 24, Math.PI);
+const djRightEye = djLeftEye.clone();
+djRightEye.position.x = 0.1;
+djPerson.add(djRightEye);
+
+// Hvite øyehighlights (Roblox-stil)
+const djHighlightGeometry = new THREE.BoxGeometry(0.035, 0.035, 0.02);
+const djHighlightMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+
+const djLeftHighlight = new THREE.Mesh(djHighlightGeometry, djHighlightMaterial);
+djLeftHighlight.position.set(-0.08, 1.6, 0.27);
+djPerson.add(djLeftHighlight);
+
+const djRightHighlight = djLeftHighlight.clone();
+djRightHighlight.position.x = 0.12;
+djPerson.add(djRightHighlight);
+
+// Smil (bred Roblox-smil)
+const djSmileGeometry = new THREE.BoxGeometry(0.22, 0.05, 0.02);
+const djSmileMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+const djSmile = new THREE.Mesh(djSmileGeometry, djSmileMaterial);
+djSmile.position.set(0, 1.42, 0.26);
+djPerson.add(djSmile);
+
+// Munnviker (oppover for smil)
+const djCornerGeometry = new THREE.BoxGeometry(0.05, 0.05, 0.02);
+const djLeftCorner = new THREE.Mesh(djCornerGeometry, djSmileMaterial);
+djLeftCorner.position.set(-0.1, 1.44, 0.26);
+djPerson.add(djLeftCorner);
+
+const djRightCorner = djLeftCorner.clone();
+djRightCorner.position.x = 0.1;
+djPerson.add(djRightCorner);
+
+// ============================================
+// DJ HEADSET - Profesjonelle hodetelefoner
+// ============================================
+const djHpMaterial = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, metalness: 0.5, roughness: 0.5 });
+
+// Hodebøyle (toppen)
+const djHpBandGeometry = new THREE.BoxGeometry(0.55, 0.06, 0.08);
 const djHpBand = new THREE.Mesh(djHpBandGeometry, djHpMaterial);
-djHpBand.position.set(0, 1.78, 0);
-djHpBand.rotation.z = Math.PI / 2;
+djHpBand.position.set(0, 1.86, 0);
 djPerson.add(djHpBand);
 
-// Polstring på toppen
-const hpPaddingGeom = new THREE.BoxGeometry(0.08, 0.03, 0.06);
-const hpPaddingMat = new THREE.MeshLambertMaterial({ color: 0x2a2a2a });
-const hpPadding = new THREE.Mesh(hpPaddingGeom, hpPaddingMat);
-hpPadding.position.set(0, 1.8, 0);
-djPerson.add(hpPadding);
+// Hodebøyle-polstring (rød stripe)
+const djHpPaddingGeometry = new THREE.BoxGeometry(0.3, 0.04, 0.1);
+const djHpPaddingMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+const djHpPadding = new THREE.Mesh(djHpPaddingGeometry, djHpPaddingMaterial);
+djHpPadding.position.set(0, 1.88, 0);
+djPerson.add(djHpPadding);
 
-// Høyttaler-cups (store, profesjonelle)
-const djHpCupGeometry = new THREE.CylinderGeometry(0.07, 0.07, 0.05, 16);
+// Vertikale stenger ned til ørene
+const djHpArmGeometry = new THREE.BoxGeometry(0.04, 0.25, 0.04);
+const djHpLeftArm = new THREE.Mesh(djHpArmGeometry, djHpMaterial);
+djHpLeftArm.position.set(-0.27, 1.72, 0);
+djPerson.add(djHpLeftArm);
+
+const djHpRightArm = djHpLeftArm.clone();
+djHpRightArm.position.x = 0.27;
+djPerson.add(djHpRightArm);
+
+// Høyttaler-cups (store, blocky)
+const djHpCupGeometry = new THREE.BoxGeometry(0.08, 0.18, 0.12);
 const djHpLeftCup = new THREE.Mesh(djHpCupGeometry, djHpMaterial);
-djHpLeftCup.position.set(-0.26, 1.65, 0);
-djHpLeftCup.rotation.z = Math.PI / 2;
+djHpLeftCup.position.set(-0.3, 1.55, 0);
 djPerson.add(djHpLeftCup);
+
 const djHpRightCup = djHpLeftCup.clone();
-djHpRightCup.position.x = 0.26;
+djHpRightCup.position.x = 0.3;
 djPerson.add(djHpRightCup);
 
-// Øreputer
-const earPadGeom = new THREE.CylinderGeometry(0.06, 0.06, 0.02, 16);
-const earPadMat = new THREE.MeshLambertMaterial({ color: 0x3a3a3a });
-const leftEarPad = new THREE.Mesh(earPadGeom, earPadMat);
-leftEarPad.position.set(-0.24, 1.65, 0);
-leftEarPad.rotation.z = Math.PI / 2;
-djPerson.add(leftEarPad);
-const rightEarPad = leftEarPad.clone();
-rightEarPad.position.x = 0.24;
-djPerson.add(rightEarPad);
+// Øreputer (grå, myk look)
+const djEarPadGeometry = new THREE.BoxGeometry(0.04, 0.15, 0.1);
+const djEarPadMaterial = new THREE.MeshLambertMaterial({ color: 0x4a4a4a });
+const djLeftEarPad = new THREE.Mesh(djEarPadGeometry, djEarPadMaterial);
+djLeftEarPad.position.set(-0.26, 1.55, 0);
+djPerson.add(djLeftEarPad);
 
-// Nakke
-const djNeckGeom = new THREE.CylinderGeometry(0.08, 0.1, 0.1, 12);
-const djNeck = new THREE.Mesh(djNeckGeom, djSkinMaterial);
-djNeck.position.y = 1.45;
-djPerson.add(djNeck);
+const djRightEarPad = djLeftEarPad.clone();
+djRightEarPad.position.x = 0.26;
+djPerson.add(djRightEarPad);
 
-// Kropp - Svart hoodie
-const djTorsoGeometry = new THREE.CylinderGeometry(0.22, 0.26, 0.55, 16);
-const djHoodieMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-const djTorso = new THREE.Mesh(djTorsoGeometry, djHoodieMaterial);
-djTorso.position.y = 1.12;
+// ============================================
+// DJ OVERKROPP - Blocky Roblox torso med Brasil-drakt
+// ============================================
+const djTorsoGeometry = new THREE.BoxGeometry(0.55, 0.65, 0.32);
+const djTorso = new THREE.Mesh(djTorsoGeometry, djJerseyMaterial);
+djTorso.position.y = 0.95;
+djTorso.castShadow = true;
 djPerson.add(djTorso);
 
-// Hoodie-hette (bak)
-const hoodGeom = new THREE.SphereGeometry(0.18, 12, 12, 0, Math.PI * 2, 0, Math.PI * 0.5);
-const hood = new THREE.Mesh(hoodGeom, djHoodieMaterial);
-hood.position.set(0, 1.35, -0.1);
-hood.rotation.x = 0.5;
-djPerson.add(hood);
+// Brasil CBF-logo (forenklet diamant)
+const djLogoGeometry = new THREE.BoxGeometry(0.18, 0.18, 0.02);
+const djLogoMaterial = new THREE.MeshLambertMaterial({ color: 0x009c3b });
+const djLogo = new THREE.Mesh(djLogoGeometry, djLogoMaterial);
+djLogo.position.set(0, 1.0, 0.18);
+djLogo.rotation.z = Math.PI / 4;
+djPerson.add(djLogo);
 
-// Hoodie-lomme foran
-const pocketGeom = new THREE.BoxGeometry(0.3, 0.12, 0.02);
-const pocket = new THREE.Mesh(pocketGeom, new THREE.MeshLambertMaterial({ color: 0x151515 }));
-pocket.position.set(0, 0.95, 0.24);
-djPerson.add(pocket);
+// Blå sirkel i logoen
+const djLogoCircleGeometry = new THREE.BoxGeometry(0.09, 0.09, 0.02);
+const djLogoCircleMaterial = new THREE.MeshLambertMaterial({ color: 0x002776 });
+const djLogoCircle = new THREE.Mesh(djLogoCircleGeometry, djLogoCircleMaterial);
+djLogoCircle.position.set(0, 1.0, 0.19);
+djLogoCircle.rotation.z = Math.PI / 4;
+djPerson.add(djLogoCircle);
 
-// Overarmer
-const djUpperArmGeom = new THREE.CapsuleGeometry(0.055, 0.2, 4, 8);
-const djLeftUpperArm = new THREE.Mesh(djUpperArmGeom, djHoodieMaterial);
-djLeftUpperArm.position.set(-0.28, 1.2, 0.05);
-djLeftUpperArm.rotation.x = -0.6;
-djLeftUpperArm.rotation.z = 0.3;
+// Grønn krage-stripe
+const djCollarGeometry = new THREE.BoxGeometry(0.45, 0.07, 0.33);
+const djCollarMaterial = new THREE.MeshLambertMaterial({ color: 0x009c3b });
+const djCollar = new THREE.Mesh(djCollarGeometry, djCollarMaterial);
+djCollar.position.y = 1.24;
+djPerson.add(djCollar);
+
+// ============================================
+// DJ ARMER - Roblox blocky armer (gul drakt)
+// ============================================
+const djArmGeometry = new THREE.BoxGeometry(0.16, 0.5, 0.16);
+
+// Venstre arm
+const djLeftUpperArm = new THREE.Mesh(djArmGeometry, djJerseyMaterial);
+djLeftUpperArm.position.set(-0.36, 0.95, 0);
+djLeftUpperArm.rotation.x = -0.6; // Peker mot mikseren
+djLeftUpperArm.rotation.z = 0.2;
+djLeftUpperArm.castShadow = true;
 djPerson.add(djLeftUpperArm);
 
-const djRightUpperArm = new THREE.Mesh(djUpperArmGeom, djHoodieMaterial);
-djRightUpperArm.position.set(0.28, 1.2, 0.05);
+// Høyre arm
+const djRightUpperArm = new THREE.Mesh(djArmGeometry, djJerseyMaterial);
+djRightUpperArm.position.set(0.36, 0.95, 0);
 djRightUpperArm.rotation.x = -0.6;
-djRightUpperArm.rotation.z = -0.3;
+djRightUpperArm.rotation.z = -0.2;
+djRightUpperArm.castShadow = true;
 djPerson.add(djRightUpperArm);
 
-// Underarmer (hudfarget)
-const djForearmGeom = new THREE.CapsuleGeometry(0.04, 0.15, 4, 8);
-const djLeftForearm = new THREE.Mesh(djForearmGeom, djSkinMaterial);
-djLeftForearm.position.set(-0.35, 1.0, 0.25);
-djLeftForearm.rotation.x = -1.2;
-djPerson.add(djLeftForearm);
-
-const djRightForearm = new THREE.Mesh(djForearmGeom, djSkinMaterial);
-djRightForearm.position.set(0.35, 1.0, 0.25);
-djRightForearm.rotation.x = -1.2;
-djPerson.add(djRightForearm);
-
-// Hender (på mikseren)
-const djHandGeometry = new THREE.SphereGeometry(0.04, 12, 12);
+// Hender (blocky Roblox hands - hudfarge)
+const djHandGeometry = new THREE.BoxGeometry(0.16, 0.16, 0.16);
 const djLeftHand = new THREE.Mesh(djHandGeometry, djSkinMaterial);
-djLeftHand.position.set(-0.38, 0.92, 0.35);
+djLeftHand.position.set(-0.4, 0.62, 0.2);
+djLeftHand.castShadow = true;
 djPerson.add(djLeftHand);
+
 const djRightHand = new THREE.Mesh(djHandGeometry, djSkinMaterial);
-djRightHand.position.set(0.38, 0.92, 0.35);
+djRightHand.position.set(0.4, 0.62, 0.2);
+djRightHand.castShadow = true;
 djPerson.add(djRightHand);
 
-// Fingre (enkle)
-for (let h = 0; h < 2; h++) {
-    const handX = h === 0 ? -0.38 : 0.38;
-    for (let f = 0; f < 4; f++) {
-        const fingerGeom = new THREE.CapsuleGeometry(0.008, 0.03, 4, 4);
-        const finger = new THREE.Mesh(fingerGeom, djSkinMaterial);
-        finger.position.set(handX - 0.02 + f * 0.015, 0.9, 0.38);
-        finger.rotation.x = -0.5;
-        djPerson.add(finger);
-    }
-}
-
-// Svarte jeans
-const djPantsGeometry = new THREE.CylinderGeometry(0.2, 0.18, 0.3, 16);
-const djPantsMaterial = new THREE.MeshLambertMaterial({ color: 0x1a1a2e });
-const djPants = new THREE.Mesh(djPantsGeometry, djPantsMaterial);
-djPants.position.y = 0.7;
+// ============================================
+// DJ UNDERKROPP - Roblox-stil bukser
+// ============================================
+const djHipsGeometry = new THREE.BoxGeometry(0.5, 0.22, 0.3);
+const djPants = new THREE.Mesh(djHipsGeometry, djPantsMaterial);
+djPants.position.y = 0.52;
+djPants.castShadow = true;
 djPerson.add(djPants);
 
-// Ben
-const djLegGeometry = new THREE.CapsuleGeometry(0.06, 0.4, 4, 8);
+// Ben (blocky Roblox legs)
+const djLegGeometry = new THREE.BoxGeometry(0.18, 0.45, 0.18);
+
 const djLeftLeg = new THREE.Mesh(djLegGeometry, djPantsMaterial);
-djLeftLeg.position.set(-0.1, 0.35, 0);
+djLeftLeg.position.set(-0.13, 0.18, 0);
+djLeftLeg.castShadow = true;
 djPerson.add(djLeftLeg);
+
 const djRightLegMesh = new THREE.Mesh(djLegGeometry, djPantsMaterial);
-djRightLegMesh.position.set(0.1, 0.35, 0);
+djRightLegMesh.position.set(0.13, 0.18, 0);
+djRightLegMesh.castShadow = true;
 djPerson.add(djRightLegMesh);
 
-// Sko (Nike/Jordan stil)
-const djShoeGeometry = new THREE.BoxGeometry(0.1, 0.06, 0.18);
-const djShoeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+// Sko (blocky Roblox feet)
+const djShoeGeometry = new THREE.BoxGeometry(0.2, 0.1, 0.28);
+const djShoeMaterial = new THREE.MeshLambertMaterial({ color: 0x2a2a2a });
 const djLeftShoe = new THREE.Mesh(djShoeGeometry, djShoeMaterial);
-djLeftShoe.position.set(-0.1, 0.1, 0.02);
+djLeftShoe.position.set(-0.13, -0.02, 0.04);
+djLeftShoe.castShadow = true;
 djPerson.add(djLeftShoe);
+
 const djRightShoe = djLeftShoe.clone();
-djRightShoe.position.x = 0.1;
+djRightShoe.position.x = 0.13;
 djPerson.add(djRightShoe);
 
-// Sko-såle (svart)
-const soleGeom = new THREE.BoxGeometry(0.1, 0.02, 0.18);
-const soleMat = new THREE.MeshLambertMaterial({ color: 0x111111 });
-const leftSole = new THREE.Mesh(soleGeom, soleMat);
-leftSole.position.set(-0.1, 0.06, 0.02);
-djPerson.add(leftSole);
-const rightSole = leftSole.clone();
-rightSole.position.x = 0.1;
-djPerson.add(rightSole);
+// Hvit såle-stripe
+const djSoleGeometry = new THREE.BoxGeometry(0.2, 0.025, 0.28);
+const djSoleMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+const djLeftSole = new THREE.Mesh(djSoleGeometry, djSoleMaterial);
+djLeftSole.position.set(-0.13, -0.06, 0.04);
+djPerson.add(djLeftSole);
 
-// Sko-detaljer (rød swoosh)
-const swooshGeom = new THREE.BoxGeometry(0.06, 0.015, 0.01);
-const swooshMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-const leftSwoosh = new THREE.Mesh(swooshGeom, swooshMat);
-leftSwoosh.position.set(-0.1, 0.1, 0.1);
-djPerson.add(leftSwoosh);
-const rightSwoosh = leftSwoosh.clone();
-rightSwoosh.position.x = 0.1;
-djPerson.add(rightSwoosh);
+const djRightSole = djLeftSole.clone();
+djRightSole.position.x = 0.13;
+djPerson.add(djRightSole);
 
 djPerson.position.set(0, 0, -0.3);
 dj.add(djPerson);
