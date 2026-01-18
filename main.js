@@ -2265,9 +2265,11 @@ for (let i = 0; i < 8; i++) {
 // ============================================
 // KONTROLLER
 // ============================================
-const keys = { w: false, a: false, s: false, d: false, e: false };
+const keys = { w: false, a: false, s: false, d: false, e: false, f: false };
 const moveSpeed = 0.12;
 let playerRotation = 0;
+let isDancing = false;
+let dancePhase = 0;
 let targetRotation = 0;
 const rotationSpeed = 0.15; // Hvor raskt avataren snur seg (0.1 = sakte, 0.3 = raskt)
 
@@ -2275,6 +2277,12 @@ const rotationSpeed = 0.15; // Hvor raskt avataren snur seg (0.1 = sakte, 0.3 = 
 document.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
     if (keys.hasOwnProperty(key)) keys[key] = true;
+    
+    // Toggle dance with F key
+    if (key === 'f' && isPlaying && !e.repeat) {
+        isDancing = !isDancing;
+        if (danceButton) danceButton.classList.toggle('dancing', isDancing);
+    }
 });
 
 document.addEventListener('keyup', (e) => {
@@ -2298,9 +2306,29 @@ const joystickZone = document.getElementById('joystick-zone');
 const joystickBase = document.getElementById('joystick-base');
 const joystickThumb = document.getElementById('joystick-thumb');
 const interactButton = document.getElementById('interact-button');
+const danceButton = document.getElementById('dance-button');
+const danceHint = document.getElementById('dance-hint');
 
 // Sjekk om det er touch-enhet
 const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+// Dance button event listener
+if (danceButton) {
+    danceButton.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (isPlaying) {
+            isDancing = !isDancing;
+            danceButton.classList.toggle('dancing', isDancing);
+        }
+    });
+    
+    danceButton.addEventListener('click', (e) => {
+        if (isPlaying) {
+            isDancing = !isDancing;
+            danceButton.classList.toggle('dancing', isDancing);
+        }
+    });
+}
 
 if (joystickZone) {
     // Joystick Touch Start
@@ -2515,6 +2543,10 @@ async function toggleMusic() {
                 audioSource.start();
                 isPlaying = true;
                 musicText.textContent = 'Tequila 🎵';
+                
+                // Vis danseknapp
+                if (danceButton) danceButton.classList.add('visible');
+                if (danceHint) danceHint.classList.add('visible');
             } catch (e) {
                 console.log('Kunne ikke starte musikk:', e);
                 musicText.textContent = 'Avspillingsfeil';
@@ -3020,12 +3052,42 @@ function animate() {
         // Ben-sving for Roblox-stil gange
         leftLeg2.rotation.x = -Math.sin(walkCycle) * 0.4;
         rightLeg2.rotation.x = Math.sin(walkCycle) * 0.4;
+    } else if (isDancing && isPlaying) {
+        // DANSE-ANIMASJON! 💃
+        dancePhase += 0.15;
+        
+        // Hopp opp og ned til beaten
+        avatar.position.y = GROUND_LEVEL + Math.abs(Math.sin(dancePhase * 2)) * 0.15;
+        
+        // Kroppen svinger side til side
+        avatar.rotation.z = Math.sin(dancePhase) * 0.1;
+        
+        // Armene går opp og ned
+        leftArm2.rotation.x = Math.sin(dancePhase * 2) * 0.6 - 0.3;
+        rightArm2.rotation.x = -Math.sin(dancePhase * 2) * 0.6 - 0.3;
+        leftArm2.rotation.z = Math.sin(dancePhase) * 0.3 + 0.5;
+        rightArm2.rotation.z = -Math.sin(dancePhase) * 0.3 - 0.5;
+        
+        // Bena beveger seg
+        leftLeg2.rotation.x = Math.sin(dancePhase * 2) * 0.3;
+        rightLeg2.rotation.x = -Math.sin(dancePhase * 2) * 0.3;
+        leftLeg2.rotation.z = Math.sin(dancePhase) * 0.15;
+        rightLeg2.rotation.z = -Math.sin(dancePhase) * 0.15;
+        
+        // Roter litt frem og tilbake
+        avatar.rotation.y = playerRotation + Math.sin(dancePhase * 0.5) * 0.3;
     } else {
+        // Standing still
         avatar.position.y = GROUND_LEVEL;
+        avatar.rotation.z = 0;
         leftArm2.rotation.x = 0;
         rightArm2.rotation.x = 0;
+        leftArm2.rotation.z = 0;
+        rightArm2.rotation.z = 0;
         leftLeg2.rotation.x = 0;
         rightLeg2.rotation.x = 0;
+        leftLeg2.rotation.z = 0;
+        rightLeg2.rotation.z = 0;
     }
     
     // Grense
