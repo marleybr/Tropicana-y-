@@ -4,19 +4,51 @@ import * as THREE from 'three';
 // TROPICANA - Realistisk Tropisk Eventyr
 // ============================================
 
+// ============================================
+// MOBILE DETECTION & PERFORMANCE SETTINGS
+// ============================================
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+    || (navigator.maxTouchPoints > 0 && window.innerWidth < 1024);
+
+const PERFORMANCE = {
+    targetFPS: isMobile ? 30 : 60,
+    pixelRatio: isMobile ? 1.0 : Math.min(window.devicePixelRatio, 2),
+    shadows: !isMobile,
+    antialias: !isMobile,
+    reducedEffects: isMobile
+};
+
+// FPS limiting variables
+let lastFrameTime = 0;
+const frameInterval = 1000 / PERFORMANCE.targetFPS;
+
 // Scene setup
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ 
+    antialias: PERFORMANCE.antialias,
+    powerPreference: isMobile ? 'low-power' : 'high-performance'
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setPixelRatio(PERFORMANCE.pixelRatio);
+renderer.shadowMap.enabled = PERFORMANCE.shadows;
+renderer.shadowMap.type = PERFORMANCE.shadows ? THREE.PCFSoftShadowMap : THREE.BasicShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.2;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 document.getElementById('game-container').appendChild(renderer.domElement);
+
+// Visibility API - pause when tab is hidden
+let isTabVisible = true;
+document.addEventListener('visibilitychange', () => {
+    isTabVisible = !document.hidden;
+});
+
+console.log(`🎮 Performance mode: ${isMobile ? 'MOBILE (optimized)' : 'DESKTOP'}`);
+console.log(`   - Target FPS: ${PERFORMANCE.targetFPS}`);
+console.log(`   - Pixel Ratio: ${PERFORMANCE.pixelRatio}`);
+console.log(`   - Shadows: ${PERFORMANCE.shadows}`);
 
 // ============================================
 // BAKKENIVÅ - Alle objekter plasseres relativt til dette
@@ -2572,8 +2604,15 @@ const clock = new THREE.Clock();
 const cameraOffset = new THREE.Vector3(0, 4, 8);
 let walkCycle = 0;
 
-function animate() {
+function animate(currentTime) {
     requestAnimationFrame(animate);
+    
+    // Skip rendering if tab is hidden (saves battery!)
+    if (!isTabVisible) return;
+    
+    // FPS limiting for mobile devices
+    if (currentTime - lastFrameTime < frameInterval) return;
+    lastFrameTime = currentTime;
     
     const time = clock.getElapsedTime();
     const delta = clock.getDelta();
@@ -2581,23 +2620,25 @@ function animate() {
     // Oppdater hav
     oceanMaterial.uniforms.time.value = time;
     
-    // Animer partikler (støv i sollys)
-    const particlePos = particles.geometry.attributes.position.array;
-    for (let i = 0; i < particleCount; i++) {
-        particlePos[i * 3 + 1] += Math.sin(time + i) * 0.002;
-        particlePos[i * 3] += Math.cos(time * 0.5 + i) * 0.001;
+    // Animer partikler (støv i sollys) - Skip på mobil for bedre ytelse
+    if (!PERFORMANCE.reducedEffects) {
+        const particlePos = particles.geometry.attributes.position.array;
+        for (let i = 0; i < particleCount; i++) {
+            particlePos[i * 3 + 1] += Math.sin(time + i) * 0.002;
+            particlePos[i * 3] += Math.cos(time * 0.5 + i) * 0.001;
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
+        
+        // Animer ildfluer (blinkende og bevegelige)
+        const fireflyPos = fireflies.geometry.attributes.position.array;
+        for (let i = 0; i < fireflyCount; i++) {
+            fireflyPos[i * 3] += Math.sin(time * 2 + i * 0.5) * 0.02;
+            fireflyPos[i * 3 + 1] += Math.cos(time * 1.5 + i * 0.3) * 0.01;
+            fireflyPos[i * 3 + 2] += Math.sin(time * 1.8 + i * 0.7) * 0.02;
+        }
+        fireflies.geometry.attributes.position.needsUpdate = true;
+        fireflyMaterial.opacity = 0.5 + Math.sin(time * 3) * 0.3;
     }
-    particles.geometry.attributes.position.needsUpdate = true;
-    
-    // Animer ildfluer (blinkende og bevegelige)
-    const fireflyPos = fireflies.geometry.attributes.position.array;
-    for (let i = 0; i < fireflyCount; i++) {
-        fireflyPos[i * 3] += Math.sin(time * 2 + i * 0.5) * 0.02;
-        fireflyPos[i * 3 + 1] += Math.cos(time * 1.5 + i * 0.3) * 0.01;
-        fireflyPos[i * 3 + 2] += Math.sin(time * 1.8 + i * 0.7) * 0.02;
-    }
-    fireflies.geometry.attributes.position.needsUpdate = true;
-    fireflyMaterial.opacity = 0.5 + Math.sin(time * 3) * 0.3;
     
     // Animer skyer
     clouds.forEach(cloud => {
@@ -2706,114 +2747,124 @@ function animate() {
             }
         }
         
-        // Konfetti aktiv
-        confettiMaterial.opacity = 0.9;
-        const confPos = confetti.geometry.attributes.position.array;
-        for (let i = 0; i < confettiCount; i++) {
-            confPos[i * 3] += confettiVelocities[i].x;
-            confPos[i * 3 + 1] += confettiVelocities[i].y;
-            confPos[i * 3 + 2] += confettiVelocities[i].z;
-            
-            // Reset konfetti som faller under bakken
-            if (confPos[i * 3 + 1] < GROUND_LEVEL) {
-                confPos[i * 3] = (Math.random() - 0.5) * 60;
-                confPos[i * 3 + 1] = GROUND_LEVEL + 15 + Math.random() * 5;
-                confPos[i * 3 + 2] = (Math.random() - 0.5) * 60;
+        // Konfetti aktiv (skip på mobil)
+        if (!PERFORMANCE.reducedEffects) {
+            confettiMaterial.opacity = 0.9;
+            const confPos = confetti.geometry.attributes.position.array;
+            for (let i = 0; i < confettiCount; i++) {
+                confPos[i * 3] += confettiVelocities[i].x;
+                confPos[i * 3 + 1] += confettiVelocities[i].y;
+                confPos[i * 3 + 2] += confettiVelocities[i].z;
+                
+                // Reset konfetti som faller under bakken
+                if (confPos[i * 3 + 1] < GROUND_LEVEL) {
+                    confPos[i * 3] = (Math.random() - 0.5) * 60;
+                    confPos[i * 3 + 1] = GROUND_LEVEL + 15 + Math.random() * 5;
+                    confPos[i * 3 + 2] = (Math.random() - 0.5) * 60;
+                }
             }
+            confetti.geometry.attributes.position.needsUpdate = true;
         }
-        confetti.geometry.attributes.position.needsUpdate = true;
         
-        // Laserstråler - INTENSE
-        laserBeams.forEach((laser, i) => {
-            laser.material.opacity = Math.sin(time * 8 + i) > 0 ? 0.8 : 0.2;
-            laser.material.color.set(DISCO_COLOR);
-            laser.rotation.x = Math.sin(time * 3 + i) * 0.6;
-            laser.rotation.z = Math.cos(time * 2 + i * 0.5) * 0.6;
-            laser.rotation.y = time * 0.5 + (i / 4) * Math.PI * 2;
-        });
-        
-        // PYRO FLAMES! 🔥
-        pyroFlames.forEach((flameGroup, fi) => {
-            const flameActive = Math.sin(time * 4 + fi * 0.5) > 0.7;
-            flameGroup.children.forEach((flame, i) => {
-                if (flameActive) {
-                    flame.material.opacity = 0.8 - i * 0.1;
-                    flame.scale.y = 1 + Math.sin(time * 20 + i) * 0.3;
-                    flame.scale.x = 1 + Math.sin(time * 15 + i) * 0.2;
-                    flame.position.y = i * 0.3 + Math.sin(time * 25) * 0.1;
-                } else {
-                    flame.material.opacity = Math.max(0, flame.material.opacity - 0.1);
-                }
+        // Laserstråler - INTENSE (forenklet på mobil)
+        if (!PERFORMANCE.reducedEffects) {
+            laserBeams.forEach((laser, i) => {
+                laser.material.opacity = Math.sin(time * 8 + i) > 0 ? 0.8 : 0.2;
+                laser.material.color.set(DISCO_COLOR);
+                laser.rotation.x = Math.sin(time * 3 + i) * 0.6;
+                laser.rotation.z = Math.cos(time * 2 + i * 0.5) * 0.6;
+                laser.rotation.y = time * 0.5 + (i / 4) * Math.PI * 2;
             });
-        });
+        }
         
-        // CO2 Jets
-        co2Jets.forEach((jet, i) => {
-            const jetActive = Math.sin(time * 3 + i * Math.PI / 2) > 0.8;
-            if (jetActive) {
-                jet.smoke.material.opacity = 0.7;
-                jet.smoke.scale.y = 1 + Math.sin(time * 10) * 0.3;
-                jet.smoke.scale.x = 0.8 + Math.sin(time * 8) * 0.2;
-            } else {
-                jet.smoke.material.opacity = Math.max(0, jet.smoke.material.opacity - 0.05);
-            }
-        });
-        
-        // Strobe lights - FLASH HARD
-        const strobeOn = Math.sin(time * 20) > 0.9;
-        strobeLights.forEach((strobe, i) => {
-            strobe.intensity = strobeOn ? 10 : 0;
-        });
-        
-        // Moving heads
-        movingHeads.forEach((head, i) => {
-            head.intensity = 5;
-            head.color.set(DISCO_COLOR);
-            const targetAngle = time * 2 + (i / 4) * Math.PI * 2;
-            head.target.position.set(
-                Math.cos(targetAngle) * 5,
-                GROUND_LEVEL,
-                Math.sin(targetAngle) * 5
-            );
-        });
-        
-        // VERTICAL FLAME JETS - synkronisert med beaten
-        flameJets.forEach((jet, ji) => {
-            const flameActive = Math.sin(time * 5 + ji * Math.PI) > 0.6;
-            jet.flames.forEach((flame, fi) => {
-                if (flameActive) {
-                    flame.material.opacity = 0.9 - fi * 0.15;
-                    flame.scale.y = 1 + Math.sin(time * 30 + fi) * 0.3;
-                    flame.scale.x = 0.8 + Math.sin(time * 25 + fi) * 0.2;
-                } else {
-                    flame.material.opacity = Math.max(0, flame.material.opacity - 0.15);
-                }
+        // PYRO FLAMES! 🔥 (skip på mobil)
+        if (!PERFORMANCE.reducedEffects) {
+            pyroFlames.forEach((flameGroup, fi) => {
+                const flameActive = Math.sin(time * 4 + fi * 0.5) > 0.7;
+                flameGroup.children.forEach((flame, i) => {
+                    if (flameActive) {
+                        flame.material.opacity = 0.8 - i * 0.1;
+                        flame.scale.y = 1 + Math.sin(time * 20 + i) * 0.3;
+                        flame.scale.x = 1 + Math.sin(time * 15 + i) * 0.2;
+                        flame.position.y = i * 0.3 + Math.sin(time * 25) * 0.1;
+                    } else {
+                        flame.material.opacity = Math.max(0, flame.material.opacity - 0.1);
+                    }
+                });
             });
             
-            // Spawn sparks fra flamme-jets
-            if (flameActive && sparks.length < maxSparks && Math.random() < 0.2) {
-                createSpark(
-                    jet.group.position.x + (Math.random() - 0.5) * 0.5,
-                    GROUND_LEVEL + 4 + Math.random() * 2,
-                    jet.group.position.z + (Math.random() - 0.5) * 0.5
+            // CO2 Jets
+            co2Jets.forEach((jet, i) => {
+                const jetActive = Math.sin(time * 3 + i * Math.PI / 2) > 0.8;
+                if (jetActive) {
+                    jet.smoke.material.opacity = 0.7;
+                    jet.smoke.scale.y = 1 + Math.sin(time * 10) * 0.3;
+                    jet.smoke.scale.x = 0.8 + Math.sin(time * 8) * 0.2;
+                } else {
+                    jet.smoke.material.opacity = Math.max(0, jet.smoke.material.opacity - 0.05);
+                }
+            });
+        }
+        
+        // Strobe lights - FLASH HARD (skip på mobil for epilepsi og ytelse)
+        if (!PERFORMANCE.reducedEffects) {
+            const strobeOn = Math.sin(time * 20) > 0.9;
+            strobeLights.forEach((strobe, i) => {
+                strobe.intensity = strobeOn ? 10 : 0;
+            });
+            
+            // Moving heads
+            movingHeads.forEach((head, i) => {
+                head.intensity = 5;
+                head.color.set(DISCO_COLOR);
+                const targetAngle = time * 2 + (i / 4) * Math.PI * 2;
+                head.target.position.set(
+                    Math.cos(targetAngle) * 5,
+                    GROUND_LEVEL,
+                    Math.sin(targetAngle) * 5
                 );
-            }
-        });
+            });
+        }
         
-        // Animer gnister
-        for (let i = sparks.length - 1; i >= 0; i--) {
-            const spark = sparks[i];
-            spark.position.add(spark.userData.velocity);
-            spark.userData.velocity.y -= 0.015; // Gravity
-            spark.userData.life += delta;
+        // VERTICAL FLAME JETS - synkronisert med beaten (skip på mobil)
+        if (!PERFORMANCE.reducedEffects) {
+            flameJets.forEach((jet, ji) => {
+                const flameActive = Math.sin(time * 5 + ji * Math.PI) > 0.6;
+                jet.flames.forEach((flame, fi) => {
+                    if (flameActive) {
+                        flame.material.opacity = 0.9 - fi * 0.15;
+                        flame.scale.y = 1 + Math.sin(time * 30 + fi) * 0.3;
+                        flame.scale.x = 0.8 + Math.sin(time * 25 + fi) * 0.2;
+                    } else {
+                        flame.material.opacity = Math.max(0, flame.material.opacity - 0.15);
+                    }
+                });
+                
+                // Spawn sparks fra flamme-jets
+                if (flameActive && sparks.length < maxSparks && Math.random() < 0.2) {
+                    createSpark(
+                        jet.group.position.x + (Math.random() - 0.5) * 0.5,
+                        GROUND_LEVEL + 4 + Math.random() * 2,
+                        jet.group.position.z + (Math.random() - 0.5) * 0.5
+                    );
+                }
+            });
             
-            const lifeRatio = spark.userData.life / spark.userData.maxLife;
-            spark.material.opacity = 1 - lifeRatio;
-            spark.scale.setScalar(1 - lifeRatio * 0.5);
-            
-            if (spark.userData.life > spark.userData.maxLife) {
-                scene.remove(spark);
-                sparks.splice(i, 1);
+            // Animer gnister
+            for (let i = sparks.length - 1; i >= 0; i--) {
+                const spark = sparks[i];
+                spark.position.add(spark.userData.velocity);
+                spark.userData.velocity.y -= 0.015; // Gravity
+                spark.userData.life += delta;
+                
+                const lifeRatio = spark.userData.life / spark.userData.maxLife;
+                spark.material.opacity = 1 - lifeRatio;
+                spark.scale.setScalar(1 - lifeRatio * 0.5);
+                
+                if (spark.userData.life > spark.userData.maxLife) {
+                    scene.remove(spark);
+                    sparks.splice(i, 1);
+                }
             }
         }
         
