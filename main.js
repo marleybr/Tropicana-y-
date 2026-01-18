@@ -1723,12 +1723,6 @@ const girlTopHair = new THREE.Mesh(girlTopGeometry, hairMaterial2);
 girlTopHair.position.y = 1.9;
 girlHairGroup.add(girlTopHair);
 
-// Pannelugg - rett over pannen
-const bangGeometry = new THREE.BoxGeometry(0.5, 0.12, 0.1);
-const bangs = new THREE.Mesh(bangGeometry, hairMaterial2);
-bangs.position.set(0, 1.75, 0.28);
-girlHairGroup.add(bangs);
-
 // Venstre side - langt hår ned til skulder
 const leftHairGeometry = new THREE.BoxGeometry(0.12, 0.65, 0.5);
 const leftHair = new THREE.Mesh(leftHairGeometry, hairMaterial2);
